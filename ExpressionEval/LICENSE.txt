@@ -1,0 +1,6 @@
+ExpressionEval is not my work.  There is no license attached so strictly 
+speaking I probably shouldn't share it like this, but oh what the hell.
+
+Source: ".Net Expression Evaluator using DynamicMethod" by Drew Wilson
+        http://www.codeproject.com/Articles/18004/Net-Expression-Evaluator-using-DynamicMethod
+

@@ -1,0 +1,9 @@
+﻿WAVFile class and all related code minus some minor adjustments are not my 
+work.  The license doesn't say anything about credit, but credit is due so here
+it is.
+
+Source: "C# WAV file class, audio mixing, and some light audio manipulation" by 
+		Nightfox:
+        http://www.codeproject.com/Articles/35725/C-WAV-file-class-audio-mixing-and-some-light-audio
+License: The Code Project Open License (CPOL) 
+		 http://www.codeproject.com/info/cpol10.aspx
