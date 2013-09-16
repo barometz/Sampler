@@ -13,12 +13,12 @@ using ExpressionEval.ExpressionEvaluation;
 
 namespace Sampler
 {
-    public partial class Form1 : Form
+    public partial class SamplerForm : Form
     {
         Sample sample;
         SoundPlayer player;
 
-        public Form1()
+        public SamplerForm()
         {
             InitializeComponent();
             sample = new Sample();
@@ -26,7 +26,6 @@ namespace Sampler
             Length.Minimum = Convert.ToDecimal(sample.Resolution * 1000);
             sample.SampleCount = 16;
             ParseToSample(FormulaBox.Text);
-
         }
 
         Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
