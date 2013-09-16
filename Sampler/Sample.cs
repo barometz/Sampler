@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Sampler
 {
     // Seems like this might be more properly done with change notifiers
-    class SampleChangedEventArgs : EventArgs
+    public class SampleChangedEventArgs : EventArgs
     {
         public enum ChangeType { SampleRate, Length, BitDepth, Values }
         public ChangeType Type { get; private set; }
@@ -17,7 +17,7 @@ namespace Sampler
         }
     }
 
-    class Sample
+    public class Sample
     {
         /// <summary>
         /// Gets or sets the number of samples per second in Hz.
@@ -251,46 +251,5 @@ namespace Sampler
         {
             return WaveFunction(t) * normalizingfactor;
         }
-
-        public static double Sine(double t, double frequency)
-        {
-            return Math.Sin(t * frequency * 2 * Math.PI);
-        }
-
-        public static double Triangle(double t, double frequency)
-        {
-            double period = 1 / frequency;
-            // TODO: Make this less of a horror
-            return (Math.Abs((t + 0.75*period) % period - (period / 2)) - period / 4) / (period / 4);
-        }
-
-        public static double Sawtooth(double t, double frequency)
-        {
-            double period = 1 / frequency;
-            return 2 * (t / period - Math.Floor(0.5 + t / period));
-        }
-
-        public static double Square(double t, double frequency)
-        {
-            double period = 1 / frequency;
-            if (t % period > period / 2)
-            {
-                return -1;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-
-        public static double Noise(double t)
-        {
-            // http://libnoise.sourceforge.net/noisegen/index.html
-            int val = Convert.ToInt32(1000 * t);
-            val = (val >> 13) ^ val;
-            int nn = (val * (val * val * 60493 + 19990303) + 1376312589) & 0x7FFFFFFF;
-            return 1 - ((double)nn / 1073741823);
-        }
-
     }
 }

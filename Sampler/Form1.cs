@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using EricOulashin;
 using System.Media;
+using ExpressionEval.ExpressionEvaluation;
 
 namespace Sampler
 {
@@ -34,8 +35,18 @@ namespace Sampler
             //sample.WaveFunction = t => Sample.Sawtooth(t % (sample.Resolution * 19), 440) + Sample.Sine(t, 442);
             //sample.WaveFunction = t => Sample.Sine(t, 523.251) + Sample.Sine(t, 698.456)/3 * Sample.Sine(t, 0.6);
             //sample.WaveFunction = t => Sample.Triangle(t, 523.251) * Sample.Sine(t, 4.166666) * Sample.Sine(t+0.1, 0.4);
-            sample.WaveFunction = t => Sample.Sine(t, 523.251) / 1.5 + Sample.Square(t, 523.251);
+            //sample.WaveFunction = t => Sample.Sine(t, 523.251) / 1.5 + Sample.Square(t, 523.251);
 
+        }
+
+        Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
+        {
+            Func<double, double> ret = delegate(double t)
+            {
+                context.t = t;
+                return expr(context);
+            };
+            return ret;
         }
 
         void sample_SampleChanged(object sender, SampleChangedEventArgs e)
@@ -81,7 +92,19 @@ namespace Sampler
 
         private void Visualize_Click(object sender, EventArgs e)
         {
-            sample.Length = 0.0024;
+            IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionEval.MethodState.ExpressionLanguage.CSharp);
+            EvalContext context = new EvalContext();
+            context.S = sample;
+            try
+            {
+                EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(FormulaBox.Text);
+                sample.WaveFunction = GetMethod(context, expression);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            
         }
 
         private void BitDepth_CheckedChanged(object sender, EventArgs e)
