@@ -1,14 +1,19 @@
-﻿Sampler makes use of two third-party products: AudioMixer (by Nightfox) and ExpressionEval (by Drew Wilson). For these 
+﻿Licenses for Sampler and third-party code
+=========================================
+
+Sampler makes use of two third-party products: AudioMixer (by Nightfox) and ExpressionEval (by Drew Wilson). For these 
 products the following applies:
 
-
+ExpressionEval
+--------------
 ExpressionEval is not my work, save for some minor adjustments.  There is no license attached so strictly speaking I 
 probably shouldn't share it like this, but oh what the hell.
 
 Source: ".Net Expression Evaluator using DynamicMethod" by Drew Wilson
         http://www.codeproject.com/Articles/18004/Net-Expression-Evaluator-using-DynamicMethod
 
-
+AudioMixer
+----------
 Audiomixer is not my work, save for some minor adjustments.  The license doesn't say anything about credit, but credit 
 is due so here it is.
 
@@ -17,7 +22,8 @@ Source: "C# WAV file class, audio mixing, and some light audio manipulation" by 
 License: The Code Project Open License (CPOL) 
 		 http://www.codeproject.com/info/cpol10.aspx
 
-
+Sampler
+-------
 For Sampler itself the following license applies:
 
 Copyright (C) 2013 Dominic van Berkel
