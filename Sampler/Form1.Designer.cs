@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint3 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint4 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(4D, 50D);
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint5 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint6 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(4D, 50D);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.SampleChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -108,25 +108,25 @@
             this.SampleChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea2.AxisX.MajorGrid.Enabled = false;
-            chartArea2.AxisX.MajorTickMark.TickMarkStyle = System.Windows.Forms.DataVisualization.Charting.TickMarkStyle.AcrossAxis;
-            chartArea2.AxisX.Minimum = 0D;
-            chartArea2.AxisX2.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
-            chartArea2.AxisY.Crossing = 0D;
-            chartArea2.AxisY.Interval = 128D;
-            chartArea2.AxisY.LabelStyle.Enabled = false;
-            chartArea2.AxisY.Maximum = 255D;
-            chartArea2.AxisY.Minimum = -255D;
-            chartArea2.Name = "ChartArea1";
-            this.SampleChart.ChartAreas.Add(chartArea2);
+            chartArea3.AxisX.MajorGrid.Enabled = false;
+            chartArea3.AxisX.MajorTickMark.TickMarkStyle = System.Windows.Forms.DataVisualization.Charting.TickMarkStyle.AcrossAxis;
+            chartArea3.AxisX.Minimum = 0D;
+            chartArea3.AxisX2.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
+            chartArea3.AxisY.Crossing = 0D;
+            chartArea3.AxisY.Interval = 128D;
+            chartArea3.AxisY.LabelStyle.Enabled = false;
+            chartArea3.AxisY.Maximum = 255D;
+            chartArea3.AxisY.Minimum = -255D;
+            chartArea3.Name = "ChartArea1";
+            this.SampleChart.ChartAreas.Add(chartArea3);
             this.SampleChart.Location = new System.Drawing.Point(0, 0);
             this.SampleChart.Name = "SampleChart";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Name = "Series1";
-            series2.Points.Add(dataPoint3);
-            series2.Points.Add(dataPoint4);
-            this.SampleChart.Series.Add(series2);
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Name = "Series1";
+            series3.Points.Add(dataPoint5);
+            series3.Points.Add(dataPoint6);
+            this.SampleChart.Series.Add(series3);
             this.SampleChart.Size = new System.Drawing.Size(956, 443);
             this.SampleChart.TabIndex = 0;
             this.SampleChart.Text = "chart1";
@@ -156,6 +156,7 @@
             this.FormulaBox.Name = "FormulaBox";
             this.FormulaBox.Size = new System.Drawing.Size(869, 235);
             this.FormulaBox.TabIndex = 0;
+            this.FormulaBox.Text = "sin(t, C)";
             // 
             // Stop
             // 

@@ -25,17 +25,7 @@ namespace Sampler
             sample.SampleChanged += sample_SampleChanged;
             Length.Minimum = Convert.ToDecimal(sample.Resolution * 1000);
             sample.SampleCount = 16;
-            //sample.WaveFunction = t => Math.Sin(t * 440 * 2 * Math.PI) / 2 + Math.Sin(Math.Pow(t, 1.2) * 220 * 2 * Math.PI);
-            //sample.WaveFunction = t => Sample.Triangle(t, 440);
-            //sample.WaveFunction = t => Sample.Sine(t, 2) * Sample.Triangle(Sample.Sine(t, 0.4) * t, 440); // -Math.Pow(t, 2) * Sample.Sine(t, 440);
-            //sample.WaveFunction = t => Sample.Square(t, 440 * Sample.Sine(t, 4)) + Sample.Sine(t, 330);
-            //sample.WaveFunction = t => Sample.Sine(t, 441) + Sample.Sine(t, 439) + Sample.Sine(t, 220) * Sample.Triangle(t, 5);
-            //sample.WaveFunction = t => Sample.Noise(t) * (Sample.Sine(t, 216) + Sample.Sine(t, 224));
-            //sample.WaveFunction = t => Sample.Sawtooth(t+0.5, 1) * (Sample.Noise(t) / 5 + Sample.Noise(t/2));
-            //sample.WaveFunction = t => Sample.Sawtooth(t % (sample.Resolution * 19), 440) + Sample.Sine(t, 442);
-            //sample.WaveFunction = t => Sample.Sine(t, 523.251) + Sample.Sine(t, 698.456)/3 * Sample.Sine(t, 0.6);
-            //sample.WaveFunction = t => Sample.Triangle(t, 523.251) * Sample.Sine(t, 4.166666) * Sample.Sine(t+0.1, 0.4);
-            //sample.WaveFunction = t => Sample.Sine(t, 523.251) / 1.5 + Sample.Square(t, 523.251);
+            ParseToSample(FormulaBox.Text);
 
         }
 
@@ -47,6 +37,15 @@ namespace Sampler
                 return expr(context);
             };
             return ret;
+        }
+
+        void ParseToSample(string text)
+        {
+            IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionEval.MethodState.ExpressionLanguage.CSharp);
+            EvalContext context = new EvalContext();
+            context.S = sample;
+            EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(text);
+            sample.WaveFunction = GetMethod(context, expression);
         }
 
         void sample_SampleChanged(object sender, SampleChangedEventArgs e)
@@ -92,13 +91,9 @@ namespace Sampler
 
         private void Visualize_Click(object sender, EventArgs e)
         {
-            IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionEval.MethodState.ExpressionLanguage.CSharp);
-            EvalContext context = new EvalContext();
-            context.S = sample;
             try
             {
-                EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(FormulaBox.Text);
-                sample.WaveFunction = GetMethod(context, expression);
+                ParseToSample(FormulaBox.Text);
             }
             catch (ApplicationException ex)
             {
