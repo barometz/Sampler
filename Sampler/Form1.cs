@@ -24,7 +24,7 @@ namespace Sampler
             sample = new Sample();
             sample.SampleChanged += sample_SampleChanged;
             Length.Minimum = Convert.ToDecimal(sample.Resolution * 1000);
-            sample.Length = 2;
+            sample.SampleCount = 16;
             //sample.WaveFunction = t => Math.Sin(t * 440 * 2 * Math.PI) / 2 + Math.Sin(Math.Pow(t, 1.2) * 220 * 2 * Math.PI);
             //sample.WaveFunction = t => Sample.Triangle(t, 440);
             //sample.WaveFunction = t => Sample.Sine(t, 2) * Sample.Triangle(Sample.Sine(t, 0.4) * t, 440); // -Math.Pow(t, 2) * Sample.Sine(t, 440);
@@ -100,7 +100,7 @@ namespace Sampler
                 EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(FormulaBox.Text);
                 sample.WaveFunction = GetMethod(context, expression);
             }
-            catch (Exception ex)
+            catch (ApplicationException ex)
             {
                 MessageBox.Show(ex.ToString());
             }

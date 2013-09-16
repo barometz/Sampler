@@ -5,6 +5,7 @@ using System.Reflection.Emit;
 using System.Text;
 using ExpressionEval.MethodState;
 using ExpressionEval.MsilConversion;
+using ExpressionEval.ExpressionCompiler;
 
 namespace ExpressionEval.DynamicMethodGenerator
 {
@@ -124,7 +125,8 @@ namespace ExpressionEval.DynamicMethodGenerator
             }
 
             //create an instance of a compiler
-            compiler = (IExpressionCompiler)loAppDomain.CreateInstanceFromAndUnwrap("ExpressionEval.ExpressionCompiler.dll", "ExpressionEval.ExpressionCompiler." + className);
+            //compiler = (IExpressionCompiler)loAppDomain.CreateInstanceFromAndUnwrap("ExpressionEval.ExpressionCompiler.dll", "ExpressionEval.ExpressionCompiler." + className);
+            compiler = new ExpressionEval.ExpressionCompiler.CSharpExpressionCompiler();
 
             try
             {
@@ -144,7 +146,8 @@ namespace ExpressionEval.DynamicMethodGenerator
                     exceptionMessage.Append(Environment.NewLine);
                 }
 
-                throw new ApplicationException(exceptionMessage.ToString());
+
+                throw new ApplicationException(exceptionMessage.ToString(), e);
             }
             finally
             {

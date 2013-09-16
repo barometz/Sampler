@@ -28,15 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint1 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
-            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint2 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(4D, 50D);
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint3 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
+            System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint4 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(4D, 50D);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.SampleChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.Visualize = new System.Windows.Forms.Button();
             this.FormulaBox = new System.Windows.Forms.TextBox();
+            this.Stop = new System.Windows.Forms.Button();
+            this.Play = new System.Windows.Forms.Button();
             this.BitDepth = new System.Windows.Forms.GroupBox();
             this.BitDepth16 = new System.Windows.Forms.RadioButton();
             this.BitDepth8 = new System.Windows.Forms.RadioButton();
@@ -44,8 +46,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tagSampleCount = new System.Windows.Forms.Label();
             this.SampleCount = new System.Windows.Forms.NumericUpDown();
-            this.Play = new System.Windows.Forms.Button();
-            this.Stop = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -63,6 +63,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -79,8 +80,8 @@
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.tagSampleCount);
             this.splitContainer1.Panel2.Controls.Add(this.SampleCount);
-            this.splitContainer1.Size = new System.Drawing.Size(1036, 689);
-            this.splitContainer1.SplitterDistance = 685;
+            this.splitContainer1.Size = new System.Drawing.Size(1230, 689);
+            this.splitContainer1.SplitterDistance = 956;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
@@ -98,7 +99,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.Visualize);
             this.splitContainer2.Panel2.Controls.Add(this.FormulaBox);
-            this.splitContainer2.Size = new System.Drawing.Size(685, 689);
+            this.splitContainer2.Size = new System.Drawing.Size(956, 689);
             this.splitContainer2.SplitterDistance = 444;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -107,37 +108,38 @@
             this.SampleChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea1.AxisX.MajorGrid.Enabled = false;
-            chartArea1.AxisX.MajorTickMark.TickMarkStyle = System.Windows.Forms.DataVisualization.Charting.TickMarkStyle.AcrossAxis;
-            chartArea1.AxisX.Minimum = 0D;
-            chartArea1.AxisX2.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
-            chartArea1.AxisY.Crossing = 0D;
-            chartArea1.AxisY.Interval = 128D;
-            chartArea1.AxisY.LabelStyle.Enabled = false;
-            chartArea1.AxisY.Maximum = 255D;
-            chartArea1.AxisY.Minimum = -255D;
-            chartArea1.Name = "ChartArea1";
-            this.SampleChart.ChartAreas.Add(chartArea1);
+            chartArea2.AxisX.MajorGrid.Enabled = false;
+            chartArea2.AxisX.MajorTickMark.TickMarkStyle = System.Windows.Forms.DataVisualization.Charting.TickMarkStyle.AcrossAxis;
+            chartArea2.AxisX.Minimum = 0D;
+            chartArea2.AxisX2.Enabled = System.Windows.Forms.DataVisualization.Charting.AxisEnabled.False;
+            chartArea2.AxisY.Crossing = 0D;
+            chartArea2.AxisY.Interval = 128D;
+            chartArea2.AxisY.LabelStyle.Enabled = false;
+            chartArea2.AxisY.Maximum = 255D;
+            chartArea2.AxisY.Minimum = -255D;
+            chartArea2.Name = "ChartArea1";
+            this.SampleChart.ChartAreas.Add(chartArea2);
             this.SampleChart.Location = new System.Drawing.Point(0, 0);
             this.SampleChart.Name = "SampleChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Name = "Series1";
-            series1.Points.Add(dataPoint1);
-            series1.Points.Add(dataPoint2);
-            this.SampleChart.Series.Add(series1);
-            this.SampleChart.Size = new System.Drawing.Size(685, 443);
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Name = "Series1";
+            series2.Points.Add(dataPoint3);
+            series2.Points.Add(dataPoint4);
+            this.SampleChart.Series.Add(series2);
+            this.SampleChart.Size = new System.Drawing.Size(956, 443);
             this.SampleChart.TabIndex = 0;
             this.SampleChart.Text = "chart1";
             // 
             // Visualize
             // 
+            this.Visualize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.Visualize.AutoSize = true;
-            this.Visualize.Location = new System.Drawing.Point(291, 211);
+            this.Visualize.Location = new System.Drawing.Point(878, 6);
             this.Visualize.Name = "Visualize";
             this.Visualize.Size = new System.Drawing.Size(75, 27);
             this.Visualize.TabIndex = 1;
-            this.Visualize.Text = "Visualize";
+            this.Visualize.Text = "Parse";
             this.Visualize.UseVisualStyleBackColor = true;
             this.Visualize.Click += new System.EventHandler(this.Visualize_Click);
             // 
@@ -152,14 +154,36 @@
             this.FormulaBox.Location = new System.Drawing.Point(3, 3);
             this.FormulaBox.Multiline = true;
             this.FormulaBox.Name = "FormulaBox";
-            this.FormulaBox.Size = new System.Drawing.Size(682, 202);
+            this.FormulaBox.Size = new System.Drawing.Size(869, 235);
             this.FormulaBox.TabIndex = 0;
+            // 
+            // Stop
+            // 
+            this.Stop.AutoSize = true;
+            this.Stop.Location = new System.Drawing.Point(165, 146);
+            this.Stop.Name = "Stop";
+            this.Stop.Size = new System.Drawing.Size(75, 27);
+            this.Stop.TabIndex = 6;
+            this.Stop.Text = "Stop";
+            this.Stop.UseVisualStyleBackColor = true;
+            this.Stop.Click += new System.EventHandler(this.Stop_Click);
+            // 
+            // Play
+            // 
+            this.Play.AutoSize = true;
+            this.Play.Location = new System.Drawing.Point(165, 113);
+            this.Play.Name = "Play";
+            this.Play.Size = new System.Drawing.Size(75, 27);
+            this.Play.TabIndex = 5;
+            this.Play.Text = "Play";
+            this.Play.UseVisualStyleBackColor = true;
+            this.Play.Click += new System.EventHandler(this.Play_Click);
             // 
             // BitDepth
             // 
             this.BitDepth.Controls.Add(this.BitDepth16);
             this.BitDepth.Controls.Add(this.BitDepth8);
-            this.BitDepth.Location = new System.Drawing.Point(23, 214);
+            this.BitDepth.Location = new System.Drawing.Point(23, 113);
             this.BitDepth.Name = "BitDepth";
             this.BitDepth.Size = new System.Drawing.Size(100, 77);
             this.BitDepth.TabIndex = 4;
@@ -262,33 +286,11 @@
             0});
             this.SampleCount.ValueChanged += new System.EventHandler(this.SampleCount_ValueChanged);
             // 
-            // Play
-            // 
-            this.Play.AutoSize = true;
-            this.Play.Location = new System.Drawing.Point(165, 129);
-            this.Play.Name = "Play";
-            this.Play.Size = new System.Drawing.Size(75, 27);
-            this.Play.TabIndex = 5;
-            this.Play.Text = "Play";
-            this.Play.UseVisualStyleBackColor = true;
-            this.Play.Click += new System.EventHandler(this.Play_Click);
-            // 
-            // Stop
-            // 
-            this.Stop.AutoSize = true;
-            this.Stop.Location = new System.Drawing.Point(165, 163);
-            this.Stop.Name = "Stop";
-            this.Stop.Size = new System.Drawing.Size(75, 27);
-            this.Stop.TabIndex = 6;
-            this.Stop.Text = "Stop";
-            this.Stop.UseVisualStyleBackColor = true;
-            this.Stop.Click += new System.EventHandler(this.Stop_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1036, 689);
+            this.ClientSize = new System.Drawing.Size(1230, 689);
             this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
             this.Text = "Form1";

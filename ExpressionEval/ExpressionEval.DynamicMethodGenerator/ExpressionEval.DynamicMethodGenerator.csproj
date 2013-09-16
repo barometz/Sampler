@@ -44,6 +44,10 @@
     <Compile Include="IExpressionDelegateFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ExpressionEval.ExpressionCompiler\ExpressionEval.ExpressionCompiler.csproj">
+      <Project>{52ebecb4-7b81-4960-ad0a-f1e352ad0be0}</Project>
+      <Name>ExpressionEval.ExpressionCompiler</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ExpressionEval.MethodState\ExpressionEval.MethodState.csproj">
       <Project>{7D87BAE1-4B46-4579-91DE-ED46A3DEEE8A}</Project>
       <Name>ExpressionEval.MethodState</Name>
