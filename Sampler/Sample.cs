@@ -30,7 +30,14 @@ namespace Sampler
             }
             set
             {
-                samplerate = value;
+                if (value != samplerate)
+                {
+                    double ratio = Convert.ToDouble(value) / samplerate;
+                    samplerate = value;
+                    RaiseSampleChanged(SampleChangedEventArgs.ChangeType.SampleRate);
+                    // Adjust the sample count so the Length in seconds remains the same
+                    SampleCount = Convert.ToUInt32(SampleCount * ratio);
+                }
             }
         }
         /// <summary>

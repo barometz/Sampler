@@ -23,9 +23,15 @@ namespace Sampler
             InitializeComponent();
             sample = new Sample();
             sample.SampleChanged += sample_SampleChanged;
-            Length.Minimum = Convert.ToDecimal(sample.Resolution * 1000);
+            Time.Minimum = Convert.ToDecimal(sample.Resolution * 1000);
             sample.SampleCount = 16;
             ParseToSample(FormulaBox.Text);
+
+            rate8000.Tag = 8000;
+            rate8363.Tag = 8363;
+            rate11k.Tag = 11025;
+            rate22k.Tag = 22050;
+            rate44k.Tag = 44100;
         }
 
         Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
@@ -68,7 +74,12 @@ namespace Sampler
                     }
                     break;
                 case SampleChangedEventArgs.ChangeType.Length:
-                    Length.Value = Convert.ToDecimal(sample.Length * 1000);
+                    Time.Minimum = Convert.ToDecimal(sample.Resolution * 1000);
+                    Time.Value = Convert.ToDecimal(sample.Length * 1000);
+                    SampleCount.Value = sample.SampleCount;
+                    logTime.Value = Convert.ToInt32(Math.Log10(sample.Length) * 10);
+                    break;
+                case SampleChangedEventArgs.ChangeType.SampleRate:
                     SampleCount.Value = sample.SampleCount;
                     break;
             }
@@ -157,7 +168,37 @@ namespace Sampler
 
         private void Stop_Click(object sender, EventArgs e)
         {
-            if (player != null) player.Stop();
+            if (player != null)
+            {
+                player.Stop();
+            }
+        }
+
+        private void logTime_Scroll(object sender, EventArgs e)
+        {
+            // trackbar is logarithmical
+            // value = log10(t) * 10, t = 10**(value/10)
+            sample.Length = Math.Pow(10, Convert.ToDouble(logTime.Value) / 10);
+        }
+
+        private void rate_CheckedChanged(object sender, EventArgs e)
+        {
+            RadioButton button = sender as RadioButton;
+            if (button == null)
+            {
+                return;
+            }
+            // See if the custom rate option is selected, otherwise get the samplerate from the RadioButton's Tag.
+            if (button == rateCustom)
+            {
+                CustomRate.Enabled = true;
+                sample.SampleRate = Convert.ToUInt32(CustomRate.Value);
+            }
+            else
+            {
+                CustomRate.Enabled = false;
+                sample.SampleRate = Convert.ToUInt32(button.Tag);
+            }
         }
     }
 }
