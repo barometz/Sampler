@@ -505,6 +505,7 @@
             this.MinimumSize = new System.Drawing.Size(740, 631);
             this.Name = "SamplerForm";
             this.Text = "Sampler";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SamplerForm_FormClosed);
             this.bigSplitContainer.Panel1.ResumeLayout(false);
             this.bigSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.bigSplitContainer)).EndInit();

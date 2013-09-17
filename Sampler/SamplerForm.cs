@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,7 @@ namespace Sampler
     {
         Sample sample;
         SoundPlayer player;
+        string tempfilename;
 
         public SamplerForm()
         {
@@ -32,9 +34,11 @@ namespace Sampler
             rate11k.Tag = 11025;
             rate22k.Tag = 22050;
             rate44k.Tag = 44100;
+
+            tempfilename = Path.GetTempFileName();
         }
 
-        Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
+        private Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
         {
             Func<double, double> ret = delegate(double t)
             {
@@ -44,13 +48,45 @@ namespace Sampler
             return ret;
         }
 
-        void ParseToSample(string text)
+        /// <summary>
+        /// Turn a function string ("sin(t, C)") into a Func&lt;double, double&gt; and pass that to the sample.
+        /// </summary>
+        /// <param name="text"></param>
+        private void ParseToSample(string text)
         {
             IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionEval.MethodState.ExpressionLanguage.CSharp);
             EvalContext context = new EvalContext();
             context.S = sample;
             EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(text);
             sample.WaveFunction = GetMethod(context, expression);
+        }
+
+        /// <summary>
+        /// Store the provided sample at the specified location.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="sample"></param>
+        private void storeWAV(string filename, Sample sample)
+        {
+            var wav = new WAVFile();
+            // TODO: Clamp Sample.BitDepth to 8/16 (or not?)
+            wav.Create(filename, false, (int)sample.SampleRate, (short)sample.BitDepth, true);
+            if (sample.BitDepth == 8)
+            {
+                for (int i = 0; i < sample.SampleCount; i++)
+                {
+                    // Need to add 128 because AddSample_8bit takes unsigned bytes.
+                    wav.AddSample_8bit((byte)(sample.ValueAt(i * sample.Resolution) + 128));
+                }
+            }
+            else // Assume 16-bit for now.
+            {
+                for (int i = 0; i < sample.SampleCount; i++)
+                {
+                    wav.AddSample_16bit((short)sample.ValueAt(i * sample.Resolution));
+                }
+            }
+            wav.Close();
         }
 
         void sample_SampleChanged(object sender, SampleChangedEventArgs e)
@@ -109,7 +145,6 @@ namespace Sampler
             {
                 MessageBox.Show(ex.ToString());
             }
-            
         }
 
         private void BitDepth_CheckedChanged(object sender, EventArgs e)
@@ -142,26 +177,8 @@ namespace Sampler
 
         private void Play_Click(object sender, EventArgs e)
         {
-            var wav = new EricOulashin.WAVFile();
-            // TODO: Sample.BitDepth op 8/16 clampen
-            wav.Create("temp.wav", false, (int)sample.SampleRate, (short)sample.BitDepth, true);
-            if (sample.BitDepth == 8)
-            {
-                for (int i = 0; i < sample.SampleCount; i++)
-                {
-                    wav.AddSample_8bit((byte)(sample.ValueAt(i * sample.Resolution) + 128));
-                }
-                wav.Close();
-            }
-            else
-            {
-                for (int i = 0; i < sample.SampleCount; i++)
-                {
-                    wav.AddSample_16bit((short)sample.ValueAt(i * sample.Resolution));
-                }
-                wav.Close();
-            }
-            player = new SoundPlayer("temp.wav");
+            storeWAV(tempfilename, sample);
+            player = new SoundPlayer(tempfilename);
             if (Loop.Checked)
             {
                 player.PlayLooping();
@@ -170,7 +187,6 @@ namespace Sampler
             {
                 player.Play();
             }
-
         }
 
         private void Stop_Click(object sender, EventArgs e)
@@ -214,6 +230,23 @@ namespace Sampler
         private void CustomRate_ValueChanged(object sender, EventArgs e)
         {
             sample.SampleRate = Convert.ToUInt32(CustomRate.Value);
+        }
+
+        private void SamplerForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (player != null)
+            {
+                player.Stop();
+            }
+
+            try
+            {
+                File.Delete(tempfilename);
+            }
+            catch (Exception ex)
+            {
+                // meh
+            }
         }
     }
 }
