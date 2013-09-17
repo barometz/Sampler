@@ -56,11 +56,11 @@
             this.tagTime = new System.Windows.Forms.Label();
             this.SampleCount = new System.Windows.Forms.NumericUpDown();
             this.Time = new System.Windows.Forms.NumericUpDown();
-            this.ApplyFunction = new System.Windows.Forms.Button();
-            this.FormulaBox = new System.Windows.Forms.TextBox();
             this.lowerSplitContainer = new System.Windows.Forms.SplitContainer();
-            this.label1 = new System.Windows.Forms.Label();
+            this.FormulaBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.ApplyFunction = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.bigSplitContainer)).BeginInit();
             this.bigSplitContainer.Panel1.SuspendLayout();
             this.bigSplitContainer.Panel2.SuspendLayout();
@@ -107,6 +107,7 @@
             // 
             this.upperSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.upperSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.upperSplitContainer.IsSplitterFixed = true;
             this.upperSplitContainer.Location = new System.Drawing.Point(0, 0);
             this.upperSplitContainer.MinimumSize = new System.Drawing.Size(0, 400);
             this.upperSplitContainer.Name = "upperSplitContainer";
@@ -158,7 +159,7 @@
             this.Loop.AutoSize = true;
             this.Loop.Checked = true;
             this.Loop.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.Loop.Location = new System.Drawing.Point(176, 367);
+            this.Loop.Location = new System.Drawing.Point(180, 369);
             this.Loop.Name = "Loop";
             this.Loop.Size = new System.Drawing.Size(62, 21);
             this.Loop.TabIndex = 9;
@@ -168,7 +169,7 @@
             // Play
             // 
             this.Play.AutoSize = true;
-            this.Play.Location = new System.Drawing.Point(14, 363);
+            this.Play.Location = new System.Drawing.Point(8, 365);
             this.Play.Name = "Play";
             this.Play.Size = new System.Drawing.Size(75, 27);
             this.Play.TabIndex = 5;
@@ -180,9 +181,9 @@
             // 
             this.BitDepth.Controls.Add(this.BitDepth16);
             this.BitDepth.Controls.Add(this.BitDepth8);
-            this.BitDepth.Location = new System.Drawing.Point(14, 157);
+            this.BitDepth.Location = new System.Drawing.Point(3, 157);
             this.BitDepth.Name = "BitDepth";
-            this.BitDepth.Size = new System.Drawing.Size(230, 77);
+            this.BitDepth.Size = new System.Drawing.Size(242, 77);
             this.BitDepth.TabIndex = 4;
             this.BitDepth.TabStop = false;
             this.BitDepth.Text = "Bit depth";
@@ -220,9 +221,9 @@
             this.SampleRate.Controls.Add(this.rate11k);
             this.SampleRate.Controls.Add(this.rate8363);
             this.SampleRate.Controls.Add(this.rate8000);
-            this.SampleRate.Location = new System.Drawing.Point(14, 240);
+            this.SampleRate.Location = new System.Drawing.Point(3, 240);
             this.SampleRate.Name = "SampleRate";
-            this.SampleRate.Size = new System.Drawing.Size(230, 115);
+            this.SampleRate.Size = new System.Drawing.Size(242, 115);
             this.SampleRate.TabIndex = 8;
             this.SampleRate.TabStop = false;
             this.SampleRate.Text = "Sample rate";
@@ -323,7 +324,7 @@
             // Stop
             // 
             this.Stop.AutoSize = true;
-            this.Stop.Location = new System.Drawing.Point(95, 363);
+            this.Stop.Location = new System.Drawing.Point(90, 365);
             this.Stop.Name = "Stop";
             this.Stop.Size = new System.Drawing.Size(75, 27);
             this.Stop.TabIndex = 6;
@@ -338,9 +339,9 @@
             this.Length.Controls.Add(this.tagTime);
             this.Length.Controls.Add(this.SampleCount);
             this.Length.Controls.Add(this.Time);
-            this.Length.Location = new System.Drawing.Point(14, 9);
+            this.Length.Location = new System.Drawing.Point(3, 12);
             this.Length.Name = "Length";
-            this.Length.Size = new System.Drawing.Size(230, 142);
+            this.Length.Size = new System.Drawing.Size(242, 142);
             this.Length.TabIndex = 7;
             this.Length.TabStop = false;
             this.Length.Text = "Length";
@@ -352,7 +353,7 @@
             this.logTime.Location = new System.Drawing.Point(3, 83);
             this.logTime.Minimum = -30;
             this.logTime.Name = "logTime";
-            this.logTime.Size = new System.Drawing.Size(224, 56);
+            this.logTime.Size = new System.Drawing.Size(236, 56);
             this.logTime.TabIndex = 4;
             this.logTime.ValueChanged += new System.EventHandler(this.logTime_Scroll);
             // 
@@ -428,31 +429,6 @@
             131072});
             this.Time.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
-            // ApplyFunction
-            // 
-            this.ApplyFunction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ApplyFunction.AutoSize = true;
-            this.ApplyFunction.Location = new System.Drawing.Point(2, 3);
-            this.ApplyFunction.Name = "ApplyFunction";
-            this.ApplyFunction.Size = new System.Drawing.Size(125, 27);
-            this.ApplyFunction.TabIndex = 1;
-            this.ApplyFunction.Text = "Apply function";
-            this.ApplyFunction.UseVisualStyleBackColor = true;
-            this.ApplyFunction.Click += new System.EventHandler(this.ApplyFunction_Click);
-            // 
-            // FormulaBox
-            // 
-            this.FormulaBox.AcceptsReturn = true;
-            this.FormulaBox.AcceptsTab = true;
-            this.FormulaBox.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.FormulaBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormulaBox.Location = new System.Drawing.Point(0, 0);
-            this.FormulaBox.Multiline = true;
-            this.FormulaBox.Name = "FormulaBox";
-            this.FormulaBox.Size = new System.Drawing.Size(666, 179);
-            this.FormulaBox.TabIndex = 0;
-            this.FormulaBox.Text = "sin(t, C)";
-            // 
             // lowerSplitContainer
             // 
             this.lowerSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -471,8 +447,32 @@
             this.lowerSplitContainer.Panel2.Controls.Add(this.label1);
             this.lowerSplitContainer.Panel2.Controls.Add(this.ApplyFunction);
             this.lowerSplitContainer.Size = new System.Drawing.Size(924, 179);
-            this.lowerSplitContainer.SplitterDistance = 666;
+            this.lowerSplitContainer.SplitterDistance = 663;
             this.lowerSplitContainer.TabIndex = 0;
+            // 
+            // FormulaBox
+            // 
+            this.FormulaBox.AcceptsReturn = true;
+            this.FormulaBox.AcceptsTab = true;
+            this.FormulaBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.FormulaBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormulaBox.Location = new System.Drawing.Point(0, 0);
+            this.FormulaBox.Multiline = true;
+            this.FormulaBox.Name = "FormulaBox";
+            this.FormulaBox.Size = new System.Drawing.Size(663, 179);
+            this.FormulaBox.TabIndex = 0;
+            this.FormulaBox.Text = "sin(t, C)";
+            // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.label2.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(0, 50);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(257, 129);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "sin(t, frequency)\r\nsquare(t, frequency)\r\nsawtooth(t, frequency)\r\ntriangle(t, freq" +
+    "uency)\r\nnoise(t)";
             // 
             // label1
             // 
@@ -483,16 +483,17 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Functions:";
             // 
-            // label2
+            // ApplyFunction
             // 
-            this.label2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.label2.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(0, 50);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(254, 129);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "sin(t, frequency)\r\nsquare(t, frequency)\r\nsawtooth(t, frequency)\r\ntriangle(t, freq" +
-    "uency)\r\nnoise(t)";
+            this.ApplyFunction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ApplyFunction.AutoSize = true;
+            this.ApplyFunction.Location = new System.Drawing.Point(9, 3);
+            this.ApplyFunction.Name = "ApplyFunction";
+            this.ApplyFunction.Size = new System.Drawing.Size(125, 27);
+            this.ApplyFunction.TabIndex = 1;
+            this.ApplyFunction.Text = "Apply function";
+            this.ApplyFunction.UseVisualStyleBackColor = true;
+            this.ApplyFunction.Click += new System.EventHandler(this.ApplyFunction_Click);
             // 
             // SamplerForm
             // 
