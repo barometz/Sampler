@@ -33,11 +33,14 @@
             System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint1 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(0D, 100D);
             System.Windows.Forms.DataVisualization.Charting.DataPoint dataPoint2 = new System.Windows.Forms.DataVisualization.Charting.DataPoint(4D, 50D);
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SamplerForm));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.bigSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.upperSplitContainer = new System.Windows.Forms.SplitContainer();
             this.SampleChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.Visualize = new System.Windows.Forms.Button();
-            this.FormulaBox = new System.Windows.Forms.TextBox();
+            this.Loop = new System.Windows.Forms.CheckBox();
+            this.Play = new System.Windows.Forms.Button();
+            this.BitDepth = new System.Windows.Forms.GroupBox();
+            this.BitDepth16 = new System.Windows.Forms.RadioButton();
+            this.BitDepth8 = new System.Windows.Forms.RadioButton();
             this.SampleRate = new System.Windows.Forms.GroupBox();
             this.CustomRate = new System.Windows.Forms.NumericUpDown();
             this.rateCustom = new System.Windows.Forms.RadioButton();
@@ -46,81 +49,86 @@
             this.rate11k = new System.Windows.Forms.RadioButton();
             this.rate8363 = new System.Windows.Forms.RadioButton();
             this.rate8000 = new System.Windows.Forms.RadioButton();
+            this.Stop = new System.Windows.Forms.Button();
             this.Length = new System.Windows.Forms.GroupBox();
             this.logTime = new System.Windows.Forms.TrackBar();
             this.tagSampleCount = new System.Windows.Forms.Label();
             this.tagTime = new System.Windows.Forms.Label();
             this.SampleCount = new System.Windows.Forms.NumericUpDown();
             this.Time = new System.Windows.Forms.NumericUpDown();
-            this.Stop = new System.Windows.Forms.Button();
-            this.Play = new System.Windows.Forms.Button();
-            this.BitDepth = new System.Windows.Forms.GroupBox();
-            this.BitDepth16 = new System.Windows.Forms.RadioButton();
-            this.BitDepth8 = new System.Windows.Forms.RadioButton();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
+            this.ApplyFunction = new System.Windows.Forms.Button();
+            this.FormulaBox = new System.Windows.Forms.TextBox();
+            this.lowerSplitContainer = new System.Windows.Forms.SplitContainer();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.bigSplitContainer)).BeginInit();
+            this.bigSplitContainer.Panel1.SuspendLayout();
+            this.bigSplitContainer.Panel2.SuspendLayout();
+            this.bigSplitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.upperSplitContainer)).BeginInit();
+            this.upperSplitContainer.Panel1.SuspendLayout();
+            this.upperSplitContainer.Panel2.SuspendLayout();
+            this.upperSplitContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.SampleChart)).BeginInit();
+            this.BitDepth.SuspendLayout();
             this.SampleRate.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CustomRate)).BeginInit();
             this.Length.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.logTime)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SampleCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Time)).BeginInit();
-            this.BitDepth.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lowerSplitContainer)).BeginInit();
+            this.lowerSplitContainer.Panel1.SuspendLayout();
+            this.lowerSplitContainer.Panel2.SuspendLayout();
+            this.lowerSplitContainer.SuspendLayout();
             this.SuspendLayout();
             // 
-            // splitContainer1
+            // bigSplitContainer
             // 
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
+            this.bigSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bigSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.bigSplitContainer.IsSplitterFixed = true;
+            this.bigSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.bigSplitContainer.Name = "bigSplitContainer";
+            this.bigSplitContainer.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer1.Panel1
+            // bigSplitContainer.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
+            this.bigSplitContainer.Panel1.Controls.Add(this.upperSplitContainer);
             // 
-            // splitContainer1.Panel2
+            // bigSplitContainer.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.SampleRate);
-            this.splitContainer1.Panel2.Controls.Add(this.Length);
-            this.splitContainer1.Panel2.Controls.Add(this.Stop);
-            this.splitContainer1.Panel2.Controls.Add(this.Play);
-            this.splitContainer1.Panel2.Controls.Add(this.BitDepth);
-            this.splitContainer1.Size = new System.Drawing.Size(968, 689);
-            this.splitContainer1.SplitterDistance = 717;
-            this.splitContainer1.TabIndex = 0;
+            this.bigSplitContainer.Panel2.Controls.Add(this.lowerSplitContainer);
+            this.bigSplitContainer.Size = new System.Drawing.Size(924, 584);
+            this.bigSplitContainer.SplitterDistance = 401;
+            this.bigSplitContainer.TabIndex = 1;
             // 
-            // splitContainer2
+            // upperSplitContainer
             // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.upperSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.upperSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.upperSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.upperSplitContainer.MinimumSize = new System.Drawing.Size(0, 400);
+            this.upperSplitContainer.Name = "upperSplitContainer";
             // 
-            // splitContainer2.Panel1
+            // upperSplitContainer.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.SampleChart);
+            this.upperSplitContainer.Panel1.Controls.Add(this.SampleChart);
             // 
-            // splitContainer2.Panel2
+            // upperSplitContainer.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.Visualize);
-            this.splitContainer2.Panel2.Controls.Add(this.FormulaBox);
-            this.splitContainer2.Size = new System.Drawing.Size(717, 689);
-            this.splitContainer2.SplitterDistance = 444;
-            this.splitContainer2.TabIndex = 0;
+            this.upperSplitContainer.Panel2.Controls.Add(this.Loop);
+            this.upperSplitContainer.Panel2.Controls.Add(this.Play);
+            this.upperSplitContainer.Panel2.Controls.Add(this.BitDepth);
+            this.upperSplitContainer.Panel2.Controls.Add(this.SampleRate);
+            this.upperSplitContainer.Panel2.Controls.Add(this.Stop);
+            this.upperSplitContainer.Panel2.Controls.Add(this.Length);
+            this.upperSplitContainer.Size = new System.Drawing.Size(924, 401);
+            this.upperSplitContainer.SplitterDistance = 663;
+            this.upperSplitContainer.TabIndex = 0;
             // 
             // SampleChart
             // 
-            this.SampleChart.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             chartArea1.AxisX.MajorGrid.Enabled = false;
             chartArea1.AxisX.MajorTickMark.TickMarkStyle = System.Windows.Forms.DataVisualization.Charting.TickMarkStyle.AcrossAxis;
             chartArea1.AxisX.Minimum = 0D;
@@ -132,6 +140,7 @@
             chartArea1.AxisY.Minimum = -255D;
             chartArea1.Name = "ChartArea1";
             this.SampleChart.ChartAreas.Add(chartArea1);
+            this.SampleChart.Dock = System.Windows.Forms.DockStyle.Fill;
             this.SampleChart.Location = new System.Drawing.Point(0, 0);
             this.SampleChart.Name = "SampleChart";
             series1.ChartArea = "ChartArea1";
@@ -140,36 +149,67 @@
             series1.Points.Add(dataPoint1);
             series1.Points.Add(dataPoint2);
             this.SampleChart.Series.Add(series1);
-            this.SampleChart.Size = new System.Drawing.Size(717, 443);
+            this.SampleChart.Size = new System.Drawing.Size(663, 401);
             this.SampleChart.TabIndex = 0;
             this.SampleChart.Text = "chart1";
             // 
-            // Visualize
+            // Loop
             // 
-            this.Visualize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Visualize.AutoSize = true;
-            this.Visualize.Location = new System.Drawing.Point(581, 6);
-            this.Visualize.Name = "Visualize";
-            this.Visualize.Size = new System.Drawing.Size(133, 27);
-            this.Visualize.TabIndex = 1;
-            this.Visualize.Text = "Parse";
-            this.Visualize.UseVisualStyleBackColor = true;
-            this.Visualize.Click += new System.EventHandler(this.Visualize_Click);
+            this.Loop.AutoSize = true;
+            this.Loop.Checked = true;
+            this.Loop.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.Loop.Location = new System.Drawing.Point(176, 367);
+            this.Loop.Name = "Loop";
+            this.Loop.Size = new System.Drawing.Size(62, 21);
+            this.Loop.TabIndex = 9;
+            this.Loop.Text = "Loop";
+            this.Loop.UseVisualStyleBackColor = true;
             // 
-            // FormulaBox
+            // Play
             // 
-            this.FormulaBox.AcceptsReturn = true;
-            this.FormulaBox.AcceptsTab = true;
-            this.FormulaBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.FormulaBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormulaBox.Location = new System.Drawing.Point(3, 3);
-            this.FormulaBox.Multiline = true;
-            this.FormulaBox.Name = "FormulaBox";
-            this.FormulaBox.Size = new System.Drawing.Size(572, 235);
-            this.FormulaBox.TabIndex = 0;
-            this.FormulaBox.Text = "sin(t, C)";
+            this.Play.AutoSize = true;
+            this.Play.Location = new System.Drawing.Point(14, 363);
+            this.Play.Name = "Play";
+            this.Play.Size = new System.Drawing.Size(75, 27);
+            this.Play.TabIndex = 5;
+            this.Play.Text = "Play";
+            this.Play.UseVisualStyleBackColor = true;
+            this.Play.Click += new System.EventHandler(this.Play_Click);
+            // 
+            // BitDepth
+            // 
+            this.BitDepth.Controls.Add(this.BitDepth16);
+            this.BitDepth.Controls.Add(this.BitDepth8);
+            this.BitDepth.Location = new System.Drawing.Point(14, 157);
+            this.BitDepth.Name = "BitDepth";
+            this.BitDepth.Size = new System.Drawing.Size(230, 77);
+            this.BitDepth.TabIndex = 4;
+            this.BitDepth.TabStop = false;
+            this.BitDepth.Text = "Bit depth";
+            // 
+            // BitDepth16
+            // 
+            this.BitDepth16.AutoSize = true;
+            this.BitDepth16.Location = new System.Drawing.Point(5, 48);
+            this.BitDepth16.Name = "BitDepth16";
+            this.BitDepth16.Size = new System.Drawing.Size(65, 21);
+            this.BitDepth16.TabIndex = 1;
+            this.BitDepth16.Text = "16-bit";
+            this.BitDepth16.UseVisualStyleBackColor = true;
+            this.BitDepth16.CheckedChanged += new System.EventHandler(this.BitDepth_CheckedChanged);
+            // 
+            // BitDepth8
+            // 
+            this.BitDepth8.AutoSize = true;
+            this.BitDepth8.Checked = true;
+            this.BitDepth8.Location = new System.Drawing.Point(6, 21);
+            this.BitDepth8.Name = "BitDepth8";
+            this.BitDepth8.Size = new System.Drawing.Size(57, 21);
+            this.BitDepth8.TabIndex = 0;
+            this.BitDepth8.TabStop = true;
+            this.BitDepth8.Text = "8-bit";
+            this.BitDepth8.UseVisualStyleBackColor = true;
+            this.BitDepth8.CheckedChanged += new System.EventHandler(this.BitDepth_CheckedChanged);
             // 
             // SampleRate
             // 
@@ -180,7 +220,7 @@
             this.SampleRate.Controls.Add(this.rate11k);
             this.SampleRate.Controls.Add(this.rate8363);
             this.SampleRate.Controls.Add(this.rate8000);
-            this.SampleRate.Location = new System.Drawing.Point(5, 234);
+            this.SampleRate.Location = new System.Drawing.Point(14, 240);
             this.SampleRate.Name = "SampleRate";
             this.SampleRate.Size = new System.Drawing.Size(230, 115);
             this.SampleRate.TabIndex = 8;
@@ -210,6 +250,7 @@
             0,
             0,
             0});
+            this.CustomRate.ValueChanged += new System.EventHandler(this.CustomRate_ValueChanged);
             // 
             // rateCustom
             // 
@@ -279,6 +320,17 @@
             this.rate8000.UseVisualStyleBackColor = true;
             this.rate8000.CheckedChanged += new System.EventHandler(this.rate_CheckedChanged);
             // 
+            // Stop
+            // 
+            this.Stop.AutoSize = true;
+            this.Stop.Location = new System.Drawing.Point(95, 363);
+            this.Stop.Name = "Stop";
+            this.Stop.Size = new System.Drawing.Size(75, 27);
+            this.Stop.TabIndex = 6;
+            this.Stop.Text = "Stop";
+            this.Stop.UseVisualStyleBackColor = true;
+            this.Stop.Click += new System.EventHandler(this.Stop_Click);
+            // 
             // Length
             // 
             this.Length.Controls.Add(this.logTime);
@@ -286,7 +338,7 @@
             this.Length.Controls.Add(this.tagTime);
             this.Length.Controls.Add(this.SampleCount);
             this.Length.Controls.Add(this.Time);
-            this.Length.Location = new System.Drawing.Point(5, 3);
+            this.Length.Location = new System.Drawing.Point(14, 9);
             this.Length.Name = "Length";
             this.Length.Size = new System.Drawing.Size(230, 142);
             this.Length.TabIndex = 7;
@@ -302,7 +354,7 @@
             this.logTime.Name = "logTime";
             this.logTime.Size = new System.Drawing.Size(224, 56);
             this.logTime.TabIndex = 4;
-            this.logTime.Scroll += new System.EventHandler(this.logTime_Scroll);
+            this.logTime.ValueChanged += new System.EventHandler(this.logTime_Scroll);
             // 
             // tagSampleCount
             // 
@@ -370,89 +422,100 @@
             this.Time.TabIndex = 3;
             this.Time.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.Time.Value = new decimal(new int[] {
-            2,
+            191,
             0,
             0,
-            0});
-            this.Time.ValueChanged += new System.EventHandler(this.Length_ValueChanged);
+            131072});
+            this.Time.ValueChanged += new System.EventHandler(this.Time_ValueChanged);
             // 
-            // Stop
+            // ApplyFunction
             // 
-            this.Stop.AutoSize = true;
-            this.Stop.Location = new System.Drawing.Point(165, 543);
-            this.Stop.Name = "Stop";
-            this.Stop.Size = new System.Drawing.Size(75, 27);
-            this.Stop.TabIndex = 6;
-            this.Stop.Text = "Stop";
-            this.Stop.UseVisualStyleBackColor = true;
-            this.Stop.Click += new System.EventHandler(this.Stop_Click);
+            this.ApplyFunction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ApplyFunction.AutoSize = true;
+            this.ApplyFunction.Location = new System.Drawing.Point(2, 3);
+            this.ApplyFunction.Name = "ApplyFunction";
+            this.ApplyFunction.Size = new System.Drawing.Size(125, 27);
+            this.ApplyFunction.TabIndex = 1;
+            this.ApplyFunction.Text = "Apply function";
+            this.ApplyFunction.UseVisualStyleBackColor = true;
+            this.ApplyFunction.Click += new System.EventHandler(this.ApplyFunction_Click);
             // 
-            // Play
+            // FormulaBox
             // 
-            this.Play.AutoSize = true;
-            this.Play.Location = new System.Drawing.Point(165, 510);
-            this.Play.Name = "Play";
-            this.Play.Size = new System.Drawing.Size(75, 27);
-            this.Play.TabIndex = 5;
-            this.Play.Text = "Play";
-            this.Play.UseVisualStyleBackColor = true;
-            this.Play.Click += new System.EventHandler(this.Play_Click);
+            this.FormulaBox.AcceptsReturn = true;
+            this.FormulaBox.AcceptsTab = true;
+            this.FormulaBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.FormulaBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormulaBox.Location = new System.Drawing.Point(0, 0);
+            this.FormulaBox.Multiline = true;
+            this.FormulaBox.Name = "FormulaBox";
+            this.FormulaBox.Size = new System.Drawing.Size(666, 179);
+            this.FormulaBox.TabIndex = 0;
+            this.FormulaBox.Text = "sin(t, C)";
             // 
-            // BitDepth
+            // lowerSplitContainer
             // 
-            this.BitDepth.Controls.Add(this.BitDepth16);
-            this.BitDepth.Controls.Add(this.BitDepth8);
-            this.BitDepth.Location = new System.Drawing.Point(5, 151);
-            this.BitDepth.Name = "BitDepth";
-            this.BitDepth.Size = new System.Drawing.Size(230, 77);
-            this.BitDepth.TabIndex = 4;
-            this.BitDepth.TabStop = false;
-            this.BitDepth.Text = "Bit depth";
+            this.lowerSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lowerSplitContainer.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.lowerSplitContainer.IsSplitterFixed = true;
+            this.lowerSplitContainer.Location = new System.Drawing.Point(0, 0);
+            this.lowerSplitContainer.Name = "lowerSplitContainer";
             // 
-            // BitDepth16
+            // lowerSplitContainer.Panel1
             // 
-            this.BitDepth16.AutoSize = true;
-            this.BitDepth16.Location = new System.Drawing.Point(5, 48);
-            this.BitDepth16.Name = "BitDepth16";
-            this.BitDepth16.Size = new System.Drawing.Size(65, 21);
-            this.BitDepth16.TabIndex = 1;
-            this.BitDepth16.Text = "16-bit";
-            this.BitDepth16.UseVisualStyleBackColor = true;
-            this.BitDepth16.CheckedChanged += new System.EventHandler(this.BitDepth_CheckedChanged);
+            this.lowerSplitContainer.Panel1.Controls.Add(this.FormulaBox);
             // 
-            // BitDepth8
+            // lowerSplitContainer.Panel2
             // 
-            this.BitDepth8.AutoSize = true;
-            this.BitDepth8.Checked = true;
-            this.BitDepth8.Location = new System.Drawing.Point(6, 21);
-            this.BitDepth8.Name = "BitDepth8";
-            this.BitDepth8.Size = new System.Drawing.Size(57, 21);
-            this.BitDepth8.TabIndex = 0;
-            this.BitDepth8.TabStop = true;
-            this.BitDepth8.Text = "8-bit";
-            this.BitDepth8.UseVisualStyleBackColor = true;
-            this.BitDepth8.CheckedChanged += new System.EventHandler(this.BitDepth_CheckedChanged);
+            this.lowerSplitContainer.Panel2.Controls.Add(this.label2);
+            this.lowerSplitContainer.Panel2.Controls.Add(this.label1);
+            this.lowerSplitContainer.Panel2.Controls.Add(this.ApplyFunction);
+            this.lowerSplitContainer.Size = new System.Drawing.Size(924, 179);
+            this.lowerSplitContainer.SplitterDistance = 666;
+            this.lowerSplitContainer.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 33);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(73, 17);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Functions:";
+            // 
+            // label2
+            // 
+            this.label2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.label2.Font = new System.Drawing.Font("Consolas", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(0, 50);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(254, 129);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "sin(t, frequency)\r\nsquare(t, frequency)\r\nsawtooth(t, frequency)\r\ntriangle(t, freq" +
+    "uency)\r\nnoise(t)";
             // 
             // SamplerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(968, 689);
-            this.Controls.Add(this.splitContainer1);
+            this.ClientSize = new System.Drawing.Size(924, 584);
+            this.Controls.Add(this.bigSplitContainer);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(740, 631);
             this.Name = "SamplerForm";
             this.Text = "Sampler";
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            this.splitContainer1.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            this.splitContainer2.Panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
+            this.bigSplitContainer.Panel1.ResumeLayout(false);
+            this.bigSplitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.bigSplitContainer)).EndInit();
+            this.bigSplitContainer.ResumeLayout(false);
+            this.upperSplitContainer.Panel1.ResumeLayout(false);
+            this.upperSplitContainer.Panel2.ResumeLayout(false);
+            this.upperSplitContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.upperSplitContainer)).EndInit();
+            this.upperSplitContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.SampleChart)).EndInit();
+            this.BitDepth.ResumeLayout(false);
+            this.BitDepth.PerformLayout();
             this.SampleRate.ResumeLayout(false);
             this.SampleRate.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CustomRate)).EndInit();
@@ -461,30 +524,26 @@
             ((System.ComponentModel.ISupportInitialize)(this.logTime)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SampleCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Time)).EndInit();
-            this.BitDepth.ResumeLayout(false);
-            this.BitDepth.PerformLayout();
+            this.lowerSplitContainer.Panel1.ResumeLayout(false);
+            this.lowerSplitContainer.Panel1.PerformLayout();
+            this.lowerSplitContainer.Panel2.ResumeLayout(false);
+            this.lowerSplitContainer.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.lowerSplitContainer)).EndInit();
+            this.lowerSplitContainer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.SplitContainer bigSplitContainer;
+        private System.Windows.Forms.SplitContainer upperSplitContainer;
         private System.Windows.Forms.DataVisualization.Charting.Chart SampleChart;
-        private System.Windows.Forms.TextBox FormulaBox;
-        private System.Windows.Forms.Button Visualize;
+        private System.Windows.Forms.CheckBox Loop;
+        private System.Windows.Forms.Button Play;
         private System.Windows.Forms.GroupBox BitDepth;
         private System.Windows.Forms.RadioButton BitDepth16;
         private System.Windows.Forms.RadioButton BitDepth8;
-        private System.Windows.Forms.NumericUpDown Time;
-        private System.Windows.Forms.Label tagTime;
-        private System.Windows.Forms.Label tagSampleCount;
-        private System.Windows.Forms.NumericUpDown SampleCount;
-        private System.Windows.Forms.Button Play;
-        private System.Windows.Forms.Button Stop;
-        private System.Windows.Forms.GroupBox Length;
-        private System.Windows.Forms.TrackBar logTime;
         private System.Windows.Forms.GroupBox SampleRate;
         private System.Windows.Forms.NumericUpDown CustomRate;
         private System.Windows.Forms.RadioButton rateCustom;
@@ -493,6 +552,20 @@
         private System.Windows.Forms.RadioButton rate11k;
         private System.Windows.Forms.RadioButton rate8363;
         private System.Windows.Forms.RadioButton rate8000;
+        private System.Windows.Forms.Button Stop;
+        private System.Windows.Forms.GroupBox Length;
+        private System.Windows.Forms.TrackBar logTime;
+        private System.Windows.Forms.Label tagSampleCount;
+        private System.Windows.Forms.Label tagTime;
+        private System.Windows.Forms.NumericUpDown SampleCount;
+        private System.Windows.Forms.NumericUpDown Time;
+        private System.Windows.Forms.Button ApplyFunction;
+        private System.Windows.Forms.TextBox FormulaBox;
+        private System.Windows.Forms.SplitContainer lowerSplitContainer;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+
+
     }
 }
 

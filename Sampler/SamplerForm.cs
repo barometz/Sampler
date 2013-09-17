@@ -99,7 +99,7 @@ namespace Sampler
             SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(sample.Length * 1000)));
         }
 
-        private void Visualize_Click(object sender, EventArgs e)
+        private void ApplyFunction_Click(object sender, EventArgs e)
         {
             try
             {
@@ -132,7 +132,7 @@ namespace Sampler
             }
         }
 
-        private void Length_ValueChanged(object sender, EventArgs e)
+        private void Time_ValueChanged(object sender, EventArgs e)
         {
             if (sender as NumericUpDown != null)
             {
@@ -162,7 +162,14 @@ namespace Sampler
                 wav.Close();
             }
             player = new SoundPlayer("temp.wav");
-            player.PlayLooping();
+            if (Loop.Checked)
+            {
+                player.PlayLooping();
+            }
+            else
+            {
+                player.Play();
+            }
 
         }
 
@@ -176,15 +183,18 @@ namespace Sampler
 
         private void logTime_Scroll(object sender, EventArgs e)
         {
-            // trackbar is logarithmical
-            // value = log10(t) * 10, t = 10**(value/10)
-            sample.Length = Math.Pow(10, Convert.ToDouble(logTime.Value) / 10);
+            // trackbar is logarithmical: value = log10(t) * 10; t = 10**(value/10)
+            // Extra equality check here to avoid rounding screwups
+            if (Convert.ToInt32(Math.Log10(sample.Length) * 10) != logTime.Value)
+            {
+                sample.Length = Math.Pow(10, Convert.ToDouble(logTime.Value) / 10);
+            }
         }
 
         private void rate_CheckedChanged(object sender, EventArgs e)
         {
             RadioButton button = sender as RadioButton;
-            if (button == null)
+            if (button == null || button.Checked == false)
             {
                 return;
             }
@@ -199,6 +209,11 @@ namespace Sampler
                 CustomRate.Enabled = false;
                 sample.SampleRate = Convert.ToUInt32(button.Tag);
             }
+        }
+
+        private void CustomRate_ValueChanged(object sender, EventArgs e)
+        {
+            sample.SampleRate = Convert.ToUInt32(CustomRate.Value);
         }
     }
 }
