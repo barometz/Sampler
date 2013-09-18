@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Media;
 using System.Windows.Forms;
@@ -10,6 +11,7 @@ namespace Sampler
 {
     public partial class SamplerForm : Form
     {
+        private readonly Dictionary<uint, RadioButton> _defaultRates;
         private readonly string _tempfilename;
         private SoundPlayer _player;
         private Sample _sample;
@@ -17,19 +19,34 @@ namespace Sampler
         public SamplerForm()
         {
             InitializeComponent();
-            _sample = new Sample();
-            _sample.SampleChanged += sample_SampleChanged;
-            Time.Minimum = Convert.ToDecimal(_sample.Resolution*1000);
-            _sample.SampleCount = 16;
-            ParseToSample(FormulaBox.Text);
+            _defaultRates = new Dictionary<uint, RadioButton>
+            {
+                {8000, rate8000},
+                {8363, rate8363},
+                {11025, rate11k},
+                {22050, rate22k},
+                {44100, rate44k}
+            };
 
-            rate8000.Tag = 8000;
-            rate8363.Tag = 8363;
-            rate11k.Tag = 11025;
-            rate22k.Tag = 22050;
-            rate44k.Tag = 44100;
+            foreach (var defaultRate in _defaultRates)
+            {
+                defaultRate.Value.Tag = defaultRate.Key;
+            }
+
+            MakeNewSample();
 
             _tempfilename = Path.GetTempFileName();
+        }
+
+        private void MakeNewSample()
+        {
+            _sample = new Sample {SampleCount = 16};
+            UpdateTimeUI(_sample);
+            UpdateBitdepthUI(_sample);
+            UpdateSampleRateUI(_sample);
+            _sample.SampleChanged += sample_SampleChanged;
+            FormulaBox.Text = "sin(t, C)";
+            ParseToSample(FormulaBox.Text, _sample);
         }
 
         private static Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
@@ -43,15 +60,19 @@ namespace Sampler
         }
 
         /// <summary>
-        ///     Turn a function string ("sin(t, C)") into a Func&lt;double, double&gt; and pass that to the sample.
+        ///     Turn a function string ("sin(t, C)") into a Func&lt;double, double&gt; and connect it with the sample.
         /// </summary>
-        /// <param name="text"></param>
-        private void ParseToSample(string text)
+        /// <param name="text">A string that represents a function that can be used to generate a waveform.</param>
+        /// <param name="sample">
+        ///     The sample will be used in the method's evaluation context and receives the generated Func&lt;
+        ///     double, double&gt;.
+        /// </param>
+        private static void ParseToSample(string text, Sample sample)
         {
             IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionLanguage.CSharp);
-            var context = new EvalContext {S = _sample};
+            var context = new EvalContext {S = sample};
             EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(text);
-            _sample.WaveFunction = GetMethod(context, expression);
+            sample.WaveFunction = GetMethod(context, expression);
         }
 
         /// <summary>
@@ -84,8 +105,8 @@ namespace Sampler
 
         private void sample_SampleChanged(object sender, SampleChangedEventArgs e)
         {
-            _sample = sender as Sample;
-            if (_sample == null)
+            var sample = sender as Sample;
+            if (sample == null)
             {
                 return;
             }
@@ -93,46 +114,82 @@ namespace Sampler
             switch (e.Type)
             {
                 case SampleChangedEventArgs.ChangeType.BitDepth:
-                    if (_sample.BitDepth == 8)
-                    {
-                        BitDepth8.Checked = true;
-                    }
-                    else if (_sample.BitDepth == 16)
-                    {
-                        BitDepth16.Checked = true;
-                    }
+                    UpdateBitdepthUI(sample);
                     break;
                 case SampleChangedEventArgs.ChangeType.Length:
-                    Time.Minimum = Convert.ToDecimal(_sample.Resolution*1000);
-                    Time.Value = Convert.ToDecimal(_sample.Length*1000);
-                    SampleCount.Value = _sample.SampleCount;
-                    logTime.Value = Convert.ToInt32(Math.Log10(_sample.Length)*10);
+                    UpdateTimeUI(sample);
                     break;
                 case SampleChangedEventArgs.ChangeType.SampleRate:
-                    SampleCount.Value = _sample.SampleCount;
+                    UpdateTimeUI(sample);
+                    UpdateSampleRateUI(sample);
                     break;
             }
 
-            SampleChart.ChartAreas[0].AxisX.Maximum = _sample.Length*1000;
-            SampleChart.ChartAreas[0].AxisY.Minimum = _sample.LowerBound - 1;
-            SampleChart.ChartAreas[0].AxisY.Maximum = _sample.UpperBound;
+            SampleChart.ChartAreas[0].AxisX.Maximum = sample.Length*1000;
+            SampleChart.ChartAreas[0].AxisY.Minimum = sample.LowerBound - 1;
+            SampleChart.ChartAreas[0].AxisY.Maximum = sample.UpperBound;
             // Getting the gridlines right on a Chart is a bit of a pain 
-            SampleChart.ChartAreas[0].AxisY.Interval = (_sample.LowerBound - 2)/-2.0;
+            SampleChart.ChartAreas[0].AxisY.Interval = (sample.LowerBound - 2)/-2.0;
 
             SampleChart.Series[0].Points.Clear();
-            for (int i = 0; i < _sample.SampleCount; i++)
+            for (int i = 0; i < sample.SampleCount; i++)
             {
-                SampleChart.Series[0].Points.AddXY(i*1000*_sample.Resolution, _sample.ValueAt(i*_sample.Resolution));
+                SampleChart.Series[0].Points.AddXY(i*1000*sample.Resolution, sample.ValueAt(i*sample.Resolution));
             }
             // Get at most ten tickmarks on the X-axis. 
-            SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(_sample.Length*1000)));
+            SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(sample.Length*1000)));
+        }
+
+        private void UpdateBitdepthUI(Sample sample)
+        {
+            if (sample.BitDepth == 8)
+            {
+                BitDepth8.Checked = true;
+            }
+            else if (sample.BitDepth == 16)
+            {
+                BitDepth16.Checked = true;
+            }
+        }
+
+        private void UpdateSampleRateUI(Sample sample)
+        {
+            if (CustomRate.Value == sample.SampleRate)
+            {
+                rateCustom.Checked = true;
+            }
+            else if (_defaultRates.ContainsKey(sample.SampleRate))
+            {
+                _defaultRates[sample.SampleRate].Checked = true;
+            }
+            else
+            {
+                rateCustom.Checked = true;
+                CustomRate.Value = sample.SampleRate;
+            }
+        }
+
+        /// <summary>
+        ///     Sets the limits of the time controls according to the resolution of the <paramref name="sample" /> and
+        ///     their values according to its length.
+        /// </summary>
+        /// <param name="sample"></param>
+        private void UpdateTimeUI(Sample sample)
+        {
+            Time.Minimum = Convert.ToDecimal(sample.Resolution*1000);
+            Time.Increment = Convert.ToDecimal(sample.Resolution*1000);
+            logTime.Minimum = Convert.ToInt32(Math.Log10(sample.Resolution)*10);
+
+            Time.Value = Convert.ToDecimal(sample.Length*1000);
+            SampleCount.Value = sample.SampleCount;
+            logTime.Value = Convert.ToInt32(Math.Log10(sample.Length)*10);
         }
 
         private void ApplyFunction_Click(object sender, EventArgs e)
         {
             try
             {
-                ParseToSample(FormulaBox.Text);
+                ParseToSample(FormulaBox.Text, _sample);
             }
             catch (ApplicationException ex)
             {
@@ -237,15 +294,26 @@ namespace Sampler
                 File.Delete(_tempfilename);
             }
             catch (IOException)
-            {  // IOException and UnauthoriedAccessException shouldn't happen, but may occur when someone's reading the 
-            }  // tempfile for whatever reason.
+            {
+              // IOException and UnauthoriedAccessException shouldn't happen, but may occur when someone's reading the 
+            } // tempfile for whatever reason.
             catch (UnauthorizedAccessException)
             {
-            } 
+            }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString(), "Error while deleting temporary files");
             }
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_player != null)
+            {
+                _player.Stop();
+            }
+            _sample.SampleChanged -= sample_SampleChanged;
+            MakeNewSample();
         }
     }
 }
