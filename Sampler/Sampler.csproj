@@ -49,6 +49,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutBox.Designer.cs">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="AudioMixer\UtilityFunctions.cs" />
     <Compile Include="AudioMixer\WAVFile.cs" />
     <Compile Include="AudioMixer\WAVFileExceptions.cs" />
@@ -63,6 +69,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sample.cs" />
+    <EmbeddedResource Include="AboutBox.resx">
+      <DependentUpon>AboutBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SamplerForm.resx">
       <DependentUpon>SamplerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -76,6 +85,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="Help\bootstrap\fonts\glyphicons-halflings-regular.eot" />
+    <None Include="Help\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
+    <None Include="Help\bootstrap\fonts\glyphicons-halflings-regular.woff" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -91,6 +103,18 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AudioMixer\LICENSE.txt" />
+    <Content Include="Help\bootstrap\css\bootstrap-theme.css" />
+    <Content Include="Help\bootstrap\css\bootstrap-theme.min.css" />
+    <Content Include="Help\bootstrap\css\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Help\bootstrap\css\bootstrap.min.css" />
+    <Content Include="Help\bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Help\bootstrap\js\bootstrap.js" />
+    <Content Include="Help\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Help\index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="icon.ico" />
     <Content Include="LICENSE.txt" />
   </ItemGroup>

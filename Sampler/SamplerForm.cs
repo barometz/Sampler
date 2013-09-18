@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Media;
 using System.Windows.Forms;
@@ -19,6 +20,7 @@ namespace Sampler
 
         public SamplerForm()
         {
+            // TODO: Figure out what's slowing down form loading (probably drawing the chart) and move it to a background worker
             InitializeComponent();
             _defaultRates = new Dictionary<uint, RadioButton>
             {
@@ -320,6 +322,11 @@ namespace Sampler
             MakeNewSample();
         }
 
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             
@@ -331,6 +338,11 @@ namespace Sampler
             {
                 StoreWAV(audioSaveFileDialog.FileName, _sample);
             }
+        }
+
+        private void exportGraphToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -362,6 +374,30 @@ namespace Sampler
                     }
                     break;
             }
+        }
+
+        private void viewHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string execlocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string basepath = Path.GetDirectoryName(execlocation);
+                Process.Start(Path.Combine(basepath, "Help/index.html"));
+            }
+            catch (FileNotFoundException ex)
+            {
+                MessageBox.Show("Help files not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (ArgumentNullException ex)
+            {
+                MessageBox.Show("Error while retrieving the program's base path.", "Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox().ShowDialog();
         }
     }
 }
