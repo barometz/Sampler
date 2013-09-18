@@ -3,20 +3,17 @@
 namespace Sampler
 {
     /// <summary>
-    /// Evaluation context for the method extracted by the ExpressionEvaluator.  Contains a reference to the Sample 
-    /// instance so functions can use e.g. Sample.Resolution as well as the time for which to calculate things.
+    ///     Evaluation context for the method extracted by the ExpressionEvaluator.  Contains a reference to the Sample
+    ///     instance so functions can use e.g. Sample.Resolution as well as the time for which to calculate things.
     /// 
-    /// Contains a number of methods that can be used to construct waveforms and are available in the function text.
-    /// All of them should have -1..1 inclusive as their range and take a time parameter.  The periodic ones also take
-    /// a frequency parameter.
+    ///     Contains a number of methods that can be used to construct waveforms and are available in the function text.
+    ///     All of them should have -1..1 inclusive as their range and take a time parameter.  The periodic ones also take
+    ///     a frequency parameter.
     /// 
-    /// As a bonus it contains the frequencies of C5 to B5 as C, Cs, D, Ds etcetera.
+    ///     As a bonus it contains the frequencies of C5 to B5 as C, Cs, D, Ds etcetera.
     /// </summary>
     public class EvalContext
     {
-        public Sample S { get; set; }
-        public double t { get; set; }
-
         public const double C = 523.251;
         public const double Cs = 554.365;
         public const double D = 587.330;
@@ -30,73 +27,69 @@ namespace Sampler
         public const double As = 932.328;
         public const double B = 987.767;
 
+        public Sample S { get; set; }
+        public double t { get; set; }
+
         /// <summary>
-        /// Calculate a value on a sine wave.
+        ///     Calculate a value on a sine wave.
         /// </summary>
         /// <param name="t">The time in seconds.</param>
         /// <param name="frequency">The frequency of the wave.</param>
         /// <returns></returns>
         public double sin(double t, double frequency)
         {
-            return Math.Sin(t * frequency * 2 * Math.PI);
+            return Math.Sin(t*frequency*2*Math.PI);
         }
 
         /// <summary>
-        /// Calculate a value on a triangle wave.
+        ///     Calculate a value on a triangle wave.
         /// </summary>
         /// <param name="t">The time in seconds.</param>
         /// <param name="frequency">The frequency of the wave.</param>
         /// <returns></returns>
         public double triangle(double t, double frequency)
         {
-            double period = 1 / frequency;
+            double period = 1/frequency;
             // TODO: Make this less of a horror
-            return (Math.Abs((t + 0.75 * period) % period - (period / 2)) - period / 4) / (period / 4);
+            return (Math.Abs((t + 0.75*period) % period - (0.5*period)) - 0.25*period) / (0.25*period);
         }
 
         /// <summary>
-        /// Calculate a value on a sawtooth wave.
+        ///     Calculate a value on a sawtooth wave.
         /// </summary>
         /// <param name="t">The time in seconds.</param>
         /// <param name="frequency">The frequency of the wave.</param>
         /// <returns></returns>
         public double sawtooth(double t, double frequency)
         {
-            double period = 1 / frequency;
-            return 2 * (t / period - Math.Floor(0.5 + t / period));
+            double period = 1/frequency;
+            return 2*(t/period - Math.Floor(0.5 + t/period));
         }
 
         /// <summary>
-        /// Calculate a value on a square wave.
+        ///     Calculate a value on a square wave.
         /// </summary>
         /// <param name="t">The time in seconds.</param>
         /// <param name="frequency">The frequency of the wave.</param>
         /// <returns></returns>
         public double square(double t, double frequency)
         {
-            double period = 1 / frequency;
-            if (t % period > period / 2)
-            {
-                return -1;
-            }
-            else
-            {
-                return 1;
-            }
+            double period = 1/frequency;
+            return Math.Sign(period/2-t%period);
         }
 
         /// <summary>
-        /// Generate noise.
+        ///     Generate noise.
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
         public double noise(double t)
         {
             // http://libnoise.sourceforge.net/noisegen/index.html
-            int val = Convert.ToInt32(1000 * t);
+            int val = Convert.ToInt32(1000*t);
             val = (val >> 13) ^ val;
-            int nn = (val * (val * val * 60493 + 19990303) + 1376312589) & 0x7FFFFFFF;
-            return 1 - ((double)nn / 1073741823);
+            int nn = (val*(val*val*60493 + 19990303) + 1376312589) & 0x7FFFFFFF;
+            return 1 - ((double) nn/1073741823);
         }
     }
 }
