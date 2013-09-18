@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sampler
 {
@@ -33,11 +29,6 @@ namespace Sampler
         public const double A = 880.000;
         public const double As = 932.328;
         public const double B = 987.767;
-
-        public EvalContext()
-        {
-
-        }
 
         /// <summary>
         /// Calculate a value on a sine wave.

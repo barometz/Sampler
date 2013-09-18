@@ -1,32 +1,26 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using EricOulashin;
-using System.Media;
+﻿using EricOulashin;
 using ExpressionEval.ExpressionEvaluation;
+
+using System;
+using System.IO;
+using System.Media;
+using System.Windows.Forms;
 
 namespace Sampler
 {
     public partial class SamplerForm : Form
     {
-        Sample sample;
-        SoundPlayer player;
-        string tempfilename;
+        Sample _sample;
+        SoundPlayer _player;
+        readonly string _tempfilename;
 
         public SamplerForm()
         {
             InitializeComponent();
-            sample = new Sample();
-            sample.SampleChanged += sample_SampleChanged;
-            Time.Minimum = Convert.ToDecimal(sample.Resolution * 1000);
-            sample.SampleCount = 16;
+            _sample = new Sample();
+            _sample.SampleChanged += sample_SampleChanged;
+            Time.Minimum = Convert.ToDecimal(_sample.Resolution * 1000);
+            _sample.SampleCount = 16;
             ParseToSample(FormulaBox.Text);
 
             rate8000.Tag = 8000;
@@ -35,10 +29,10 @@ namespace Sampler
             rate22k.Tag = 22050;
             rate44k.Tag = 44100;
 
-            tempfilename = Path.GetTempFileName();
+            _tempfilename = Path.GetTempFileName();
         }
 
-        private Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
+        private static Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
         {
             Func<double, double> ret = delegate(double t)
             {
@@ -55,10 +49,9 @@ namespace Sampler
         private void ParseToSample(string text)
         {
             IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionEval.MethodState.ExpressionLanguage.CSharp);
-            EvalContext context = new EvalContext();
-            context.S = sample;
+            var context = new EvalContext {S = _sample};
             EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(text);
-            sample.WaveFunction = GetMethod(context, expression);
+            _sample.WaveFunction = GetMethod(context, expression);
         }
 
         /// <summary>
@@ -66,14 +59,14 @@ namespace Sampler
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="sample"></param>
-        private void storeWAV(string filename, Sample sample)
+        private static void StoreWAV(string filename, Sample sample)
         {
             var wav = new WAVFile();
             // TODO: Clamp Sample.BitDepth to 8/16 (or not?)
             wav.Create(filename, false, (int)sample.SampleRate, (short)sample.BitDepth, true);
             if (sample.BitDepth == 8)
             {
-                for (int i = 0; i < sample.SampleCount; i++)
+                for (var i = 0; i < sample.SampleCount; i++)
                 {
                     // Need to add 128 because AddSample_8bit takes unsigned bytes.
                     wav.AddSample_8bit((byte)(sample.ValueAt(i * sample.Resolution) + 128));
@@ -91,8 +84,8 @@ namespace Sampler
 
         void sample_SampleChanged(object sender, SampleChangedEventArgs e)
         {
-            sample = sender as Sample;
-            if (sample == null)
+            _sample = sender as Sample;
+            if (_sample == null)
             {
                 return;
             }
@@ -100,39 +93,39 @@ namespace Sampler
             switch (e.Type)
             {
                 case SampleChangedEventArgs.ChangeType.BitDepth:
-                    if (sample.BitDepth == 8)
+                    if (_sample.BitDepth == 8)
                     {
                         BitDepth8.Checked = true;
                     }
-                    else if (sample.BitDepth == 16)
+                    else if (_sample.BitDepth == 16)
                     {
                         BitDepth16.Checked = true;
                     }
                     break;
                 case SampleChangedEventArgs.ChangeType.Length:
-                    Time.Minimum = Convert.ToDecimal(sample.Resolution * 1000);
-                    Time.Value = Convert.ToDecimal(sample.Length * 1000);
-                    SampleCount.Value = sample.SampleCount;
-                    logTime.Value = Convert.ToInt32(Math.Log10(sample.Length) * 10);
+                    Time.Minimum = Convert.ToDecimal(_sample.Resolution * 1000);
+                    Time.Value = Convert.ToDecimal(_sample.Length * 1000);
+                    SampleCount.Value = _sample.SampleCount;
+                    logTime.Value = Convert.ToInt32(Math.Log10(_sample.Length) * 10);
                     break;
                 case SampleChangedEventArgs.ChangeType.SampleRate:
-                    SampleCount.Value = sample.SampleCount;
+                    SampleCount.Value = _sample.SampleCount;
                     break;
             }
 
-            SampleChart.ChartAreas[0].AxisX.Maximum = sample.Length * 1000;
-            SampleChart.ChartAreas[0].AxisY.Minimum = sample.LowerBound - 1;
-            SampleChart.ChartAreas[0].AxisY.Maximum = sample.UpperBound;
+            SampleChart.ChartAreas[0].AxisX.Maximum = _sample.Length * 1000;
+            SampleChart.ChartAreas[0].AxisY.Minimum = _sample.LowerBound - 1;
+            SampleChart.ChartAreas[0].AxisY.Maximum = _sample.UpperBound;
             // Getting the gridlines right on a Chart is a bit of a pain 
-            SampleChart.ChartAreas[0].AxisY.Interval = (sample.LowerBound - 2) / -2;
+            SampleChart.ChartAreas[0].AxisY.Interval = (_sample.LowerBound - 2) / -2.0;
 
             SampleChart.Series[0].Points.Clear();
-            for (int i = 0; i < sample.SampleCount; i++)
+            for (int i = 0; i < _sample.SampleCount; i++)
             {
-                SampleChart.Series[0].Points.AddXY(i * 1000 * sample.Resolution, sample.ValueAt(i * sample.Resolution));
+                SampleChart.Series[0].Points.AddXY(i * 1000 * _sample.Resolution, _sample.ValueAt(i * _sample.Resolution));
             }
             // Get at most ten tickmarks on the X-axis. 
-            SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(sample.Length * 1000)));
+            SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(_sample.Length * 1000)));
         }
 
         private void ApplyFunction_Click(object sender, EventArgs e)
@@ -151,11 +144,11 @@ namespace Sampler
         {
             if (sender as RadioButton == BitDepth8)
             {
-                sample.BitDepth = 8;
+                _sample.BitDepth = 8;
             }
             else if (sender as RadioButton == BitDepth16)
             {
-                sample.BitDepth = 16;
+                _sample.BitDepth = 16;
             }
         }
 
@@ -163,7 +156,7 @@ namespace Sampler
         {
             if (sender as NumericUpDown != null) 
             {
-                sample.SampleCount = Convert.ToUInt32((sender as NumericUpDown).Value);
+                _sample.SampleCount = Convert.ToUInt32((sender as NumericUpDown).Value);
             }
         }
 
@@ -171,29 +164,29 @@ namespace Sampler
         {
             if (sender as NumericUpDown != null)
             {
-                sample.Length = Convert.ToDouble((sender as NumericUpDown).Value / 1000);
+                _sample.Length = Convert.ToDouble((sender as NumericUpDown).Value / 1000);
             }
         }
 
         private void Play_Click(object sender, EventArgs e)
         {
-            storeWAV(tempfilename, sample);
-            player = new SoundPlayer(tempfilename);
+            StoreWAV(_tempfilename, _sample);
+            _player = new SoundPlayer(_tempfilename);
             if (Loop.Checked)
             {
-                player.PlayLooping();
+                _player.PlayLooping();
             }
             else
             {
-                player.Play();
+                _player.Play();
             }
         }
 
         private void Stop_Click(object sender, EventArgs e)
         {
-            if (player != null)
+            if (_player != null)
             {
-                player.Stop();
+                _player.Stop();
             }
         }
 
@@ -201,15 +194,15 @@ namespace Sampler
         {
             // trackbar is logarithmical: value = log10(t) * 10; t = 10**(value/10)
             // Extra equality check here to avoid rounding screwups
-            if (Convert.ToInt32(Math.Log10(sample.Length) * 10) != logTime.Value)
+            if (Convert.ToInt32(Math.Log10(_sample.Length) * 10) != logTime.Value)
             {
-                sample.Length = Math.Pow(10, Convert.ToDouble(logTime.Value) / 10);
+                _sample.Length = Math.Pow(10, Convert.ToDouble(logTime.Value) / 10);
             }
         }
 
         private void rate_CheckedChanged(object sender, EventArgs e)
         {
-            RadioButton button = sender as RadioButton;
+            var button = sender as RadioButton;
             if (button == null || button.Checked == false)
             {
                 return;
@@ -218,34 +211,36 @@ namespace Sampler
             if (button == rateCustom)
             {
                 CustomRate.Enabled = true;
-                sample.SampleRate = Convert.ToUInt32(CustomRate.Value);
+                _sample.SampleRate = Convert.ToUInt32(CustomRate.Value);
             }
             else
             {
                 CustomRate.Enabled = false;
-                sample.SampleRate = Convert.ToUInt32(button.Tag);
+                _sample.SampleRate = Convert.ToUInt32(button.Tag);
             }
         }
 
         private void CustomRate_ValueChanged(object sender, EventArgs e)
         {
-            sample.SampleRate = Convert.ToUInt32(CustomRate.Value);
+            _sample.SampleRate = Convert.ToUInt32(CustomRate.Value);
         }
 
         private void SamplerForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (player != null)
+            if (_player != null)
             {
-                player.Stop();
+                _player.Stop();
             }
 
             try
             {
-                File.Delete(tempfilename);
+                File.Delete(_tempfilename);
             }
+            catch (IOException){}                   // IOException and UnauthoriedAccessException shouldn't happen, but
+            catch (UnauthorizedAccessException){}   // may occur when someone's reading the tempfile for whatever reason.
             catch (Exception ex)
             {
-                // meh
+                MessageBox.Show(ex.ToString(), "Error while deleting temporary files");
             }
         }
     }

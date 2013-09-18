@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sampler
 {
@@ -26,14 +22,14 @@ namespace Sampler
         { 
             get 
             { 
-                return samplerate; 
+                return _samplerate; 
             }
             set
             {
-                if (value != samplerate)
+                if (value != _samplerate)
                 {
-                    double ratio = Convert.ToDouble(value) / samplerate;
-                    samplerate = value;
+                    double ratio = Convert.ToDouble(value) / _samplerate;
+                    _samplerate = value;
                     RaiseSampleChanged(SampleChangedEventArgs.ChangeType.SampleRate);
                     // Adjust the sample count so the Length in seconds remains the same
                     SampleCount = Convert.ToUInt32(SampleCount * ratio);
@@ -47,7 +43,7 @@ namespace Sampler
         {
             get
             {
-                return 1 / Convert.ToDouble(samplerate);
+                return 1 / Convert.ToDouble(_samplerate);
             }
         }
         /// <summary>
@@ -57,13 +53,13 @@ namespace Sampler
         {
             get
             {
-                return bitdepth;
+                return _bitdepth;
             }
             set
             {
-                if (value != bitdepth)
+                if (value != _bitdepth)
                 {
-                    bitdepth = value;
+                    _bitdepth = value;
                     RaiseSampleChanged(SampleChangedEventArgs.ChangeType.BitDepth);
                 }
                 
@@ -80,26 +76,25 @@ namespace Sampler
         {
             get
             {
-                return Convert.ToDouble(samplecount) / Convert.ToDouble(samplerate);
+                return Convert.ToDouble(_samplecount) / Convert.ToDouble(_samplerate);
             }
             set
             {
                 if (double.IsNaN(value) || double.IsInfinity(value))
                 {
-                    throw new ArgumentOutOfRangeException("Length", "Sample length has to be a real value, not NaN or Infinity.");
+                    throw new ArgumentOutOfRangeException("value", "Sample length has to be a real value, not NaN or Infinity.");
                 }
-                else if (value <= 0)
+                
+                if (value <= 0)
                 {
-                    throw new ArgumentOutOfRangeException("Length", "Sample length must be greater than zero.");
+                    throw new ArgumentOutOfRangeException("value", "Sample length must be greater than zero.");
                 }
-                else
+
+                uint samplecount = Convert.ToUInt32(value * _samplerate);
+                if (samplecount != _samplecount)
                 {
-                    uint _samplecount = Convert.ToUInt32(value * samplerate);
-                    if (_samplecount != samplecount)
-                    {
-                        samplecount = _samplecount;
-                        RaiseSampleChanged(SampleChangedEventArgs.ChangeType.Length);
-                    }
+                    _samplecount = samplecount;
+                    RaiseSampleChanged(SampleChangedEventArgs.ChangeType.Length);
                 }
             }
         }
@@ -110,33 +105,33 @@ namespace Sampler
         public uint SampleCount {
             get
             {
-                return samplecount;
+                return _samplecount;
             }
             set
             {
-                if (value != samplecount)
+                if (value != _samplecount)
                 {
-                    samplecount = value;
+                    _samplecount = value;
                     RaiseSampleChanged(SampleChangedEventArgs.ChangeType.Length);
                 }
             }
         }
         /// <summary>
         /// Gets or sets the function used to create the actual waveform.  Should take a time in milliseconds as its 
-        /// argument. The results will be normalized to fit between <see cref="Sample.Minvalue"/> and 
+        /// argument. The results will be normalized to fit between <see cref="Sample.MinValue"/> and 
         /// <see cref="Sample.UpperBound"/> inclusive.
         /// </summary>
         public Func<double, double> WaveFunction
         {
             get
             {
-                return wavefunction;
+                return _wavefunction;
             }
             set
             {
-                if (value != wavefunction)
+                if (value != _wavefunction)
                 {
-                    wavefunction = value;
+                    _wavefunction = value;
                     RaiseSampleChanged(SampleChangedEventArgs.ChangeType.Values);
                 }
             }
@@ -165,13 +160,16 @@ namespace Sampler
             }
         }
 
+        /// <summary>
+        /// Occurs when the sample has changed in some way.  <see cref="SampleChangedEventArgs.ChangeType"/> indicates what has changed.
+        /// </summary>
         public event EventHandler<SampleChangedEventArgs> SampleChanged;
 
-        private uint samplerate;
-        private uint samplecount;
-        private uint bitdepth;
-        private double normalizingfactor;
-        private Func<double, double> wavefunction;
+        private uint _samplerate;
+        private uint _samplecount;
+        private uint _bitdepth;
+        private double _normalizingfactor;
+        private Func<double, double> _wavefunction;
 
         /// <summary>
         /// 
@@ -182,10 +180,10 @@ namespace Sampler
         /// <param name="waveform">The waveform function.  Defaults to a sine wave at 440 Hz.</param>
         public Sample(uint samplerate = 8363, uint samplecount = 64, uint bitdepth = 8, Func<double, double> waveform = null)
         {
-            this.samplerate = samplerate;
-            this.samplecount = samplecount;
-            this.bitdepth = bitdepth;
-            this.WaveFunction = waveform ?? (t => Math.Sin(t * 440 * 2 * Math.PI));
+            _samplerate = samplerate;
+            _samplecount = samplecount;
+            _bitdepth = bitdepth;
+            WaveFunction = waveform ?? (t => Math.Sin(t * 440 * 2 * Math.PI));
             SampleChanged += Sample_SampleChanged;
         }
 
@@ -197,11 +195,11 @@ namespace Sampler
 
             if (bottomoverflow > topoverflow)
             {
-                normalizingfactor = Math.Abs(LowerBound / (LowerBound - bottomoverflow));
+                _normalizingfactor = Math.Abs(LowerBound / (LowerBound - bottomoverflow));
             }
             else
             {
-                normalizingfactor = UpperBound / (UpperBound + topoverflow);
+                _normalizingfactor = UpperBound / (UpperBound + topoverflow);
             }
         }
 
@@ -252,11 +250,11 @@ namespace Sampler
         /// Get the value at a given time.
         /// </summary>
         /// <param name="t">A time between 0 and <see cref="Sample.Length"/> in seconds.</param>
-        /// <returns>The value at <paramref name="t"/>, guaranteed to be between <see cref="Sample.Minvalue"/> and 
+        /// <returns>The value at <paramref name="t"/>, guaranteed to be between <see cref="Sample.MinValue"/> and 
         /// <see cref="Sample.UpperBound"/> inclusive.</returns>
         public double ValueAt(double t)
         {
-            return WaveFunction(t) * normalizingfactor;
+            return WaveFunction(t) * _normalizingfactor;
         }
     }
 }
