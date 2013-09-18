@@ -15,6 +15,7 @@ namespace Sampler
         private readonly string _tempfilename;
         private SoundPlayer _player;
         private Sample _sample;
+        private bool _unsavedChanges = false;
 
         public SamplerForm()
         {
@@ -47,6 +48,7 @@ namespace Sampler
             _sample.SampleChanged += sample_SampleChanged;
             FormulaBox.Text = "sin(t, C)";
             ParseToSample(FormulaBox.Text, _sample);
+            _unsavedChanges = false;
         }
 
         private static Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
@@ -138,6 +140,8 @@ namespace Sampler
             }
             // Get at most ten tickmarks on the X-axis. 
             SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(sample.Length*1000)));
+
+            _unsavedChanges = true;
         }
 
         private void UpdateBitdepthUI(Sample sample)
@@ -314,6 +318,50 @@ namespace Sampler
             }
             _sample.SampleChanged -= sample_SampleChanged;
             MakeNewSample();
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void exportAudioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (audioSaveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                StoreWAV(audioSaveFileDialog.FileName, _sample);
+            }
+        }
+
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void SamplerForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // TODO: Change this to save the waveform rather than audio once that works
+            if (!_unsavedChanges) return;
+
+            switch (MessageBox.Show("Do you want to save your changes?", "Sampler",
+                MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+            {
+                case DialogResult.Cancel:
+                    e.Cancel = true;
+                    break;
+                case DialogResult.No:
+                    break;
+                case DialogResult.Yes:
+                    if (audioSaveFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        StoreWAV(audioSaveFileDialog.FileName, _sample);
+                    }
+                    else
+                    {
+                        e.Cancel = true;
+                    }
+                    break;
+            }
         }
     }
 }

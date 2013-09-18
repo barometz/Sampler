@@ -69,10 +69,11 @@
             this.exportAudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportGraphToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.quitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.audioSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.bigSplitContainer)).BeginInit();
             this.bigSplitContainer.Panel1.SuspendLayout();
             this.bigSplitContainer.Panel2.SuspendLayout();
@@ -528,7 +529,7 @@
             this.exportAudioToolStripMenuItem,
             this.exportGraphToolStripMenuItem,
             this.toolStripSeparator1,
-            this.quitToolStripMenuItem1});
+            this.quitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "File";
@@ -551,12 +552,14 @@
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(164, 24);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exportAudioToolStripMenuItem
             // 
             this.exportAudioToolStripMenuItem.Name = "exportAudioToolStripMenuItem";
             this.exportAudioToolStripMenuItem.Size = new System.Drawing.Size(164, 24);
             this.exportAudioToolStripMenuItem.Text = "Export audio";
+            this.exportAudioToolStripMenuItem.Click += new System.EventHandler(this.exportAudioToolStripMenuItem_Click);
             // 
             // exportGraphToolStripMenuItem
             // 
@@ -569,11 +572,12 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(161, 6);
             // 
-            // quitToolStripMenuItem1
+            // quitToolStripMenuItem
             // 
-            this.quitToolStripMenuItem1.Name = "quitToolStripMenuItem1";
-            this.quitToolStripMenuItem1.Size = new System.Drawing.Size(164, 24);
-            this.quitToolStripMenuItem1.Text = "Quit";
+            this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(164, 24);
+            this.quitToolStripMenuItem.Text = "Quit";
+            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -596,6 +600,13 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(143, 24);
             this.aboutToolStripMenuItem.Text = "About";
             // 
+            // audioSaveFileDialog
+            // 
+            this.audioSaveFileDialog.DefaultExt = "wav";
+            this.audioSaveFileDialog.FileName = "waveform.wav";
+            this.audioSaveFileDialog.Filter = "WAV files|*.wav";
+            this.audioSaveFileDialog.Title = "Save waveform audio";
+            // 
             // SamplerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -608,6 +619,7 @@
             this.MinimumSize = new System.Drawing.Size(740, 661);
             this.Name = "SamplerForm";
             this.Text = "Sampler";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SamplerForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SamplerForm_FormClosed);
             this.bigSplitContainer.Panel1.ResumeLayout(false);
             this.bigSplitContainer.Panel2.ResumeLayout(false);
@@ -680,10 +692,11 @@
         private System.Windows.Forms.ToolStripMenuItem exportAudioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportGraphToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.SaveFileDialog audioSaveFileDialog;
 
 
     }
