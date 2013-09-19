@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -13,12 +15,29 @@ namespace Sampler
         public AboutBox()
         {
             InitializeComponent();
-            this.Text = String.Format("About {0}", AssemblyTitle);
-            this.labelProductName.Text = AssemblyProduct;
-            this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
-            this.labelCopyright.Text = AssemblyCopyright;
-            this.labelCompanyName.Text = AssemblyCompany;
-            this.textBoxDescription.Text = AssemblyDescription;
+            Text = String.Format("About {0}", AssemblyTitle);
+            labelProductName.Text = AssemblyProduct;
+            labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
+            labelCopyright.Text = AssemblyCopyright;
+            weblink.Links[0].LinkData = "https://github.com/barometz/Sampler";
+            linkExpressionEval.Links[0].LinkData =
+                "http://www.codeproject.com/Articles/18004/Net-Expression-Evaluator-using-DynamicMethod";
+            linkWAVFile.Links[0].LinkData =
+                "http://www.codeproject.com/Articles/35725/C-WAV-file-class-audio-mixing-and-some-light-audio";
+            splitContainer1.Panel2Collapsed = true;
+            Width = Width - LicenseText.Width;
+            
+            try
+            {
+                string execlocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string basepath = Path.GetDirectoryName(execlocation);
+                LicenseText.Text = File.ReadAllText(Path.Combine(basepath, "LICENSE.md"));
+            }
+            catch (Exception ex)
+            {
+                LicenseText.Text = "Could not open LICENSE.md: \n" + ex.Message;
+            }
+
         }
 
         #region Assembly Attribute Accessors
@@ -104,6 +123,31 @@ namespace Sampler
         private void okButton_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void link_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var target = e.Link.LinkData as string;
+            if (target != null)
+            {
+                Process.Start(target);
+            }
+        }
+
+        private void toggleLicenseText_Click(object sender, EventArgs e)
+        {
+            if (splitContainer1.Panel2Collapsed)
+            {
+                Width = Width + LicenseText.Width + 4;
+                splitContainer1.Panel2Collapsed = false;
+                toggleLicenseText.Text = "Hide license details <<";
+            }
+            else
+            {
+                splitContainer1.Panel2Collapsed = true;
+                Width = Width - LicenseText.Width - 4;
+                toggleLicenseText.Text = "Show license details >>";
+            }
         }
     }
 }
