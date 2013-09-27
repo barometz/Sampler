@@ -75,6 +75,8 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.audioSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.chartSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.sampleSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.openSampleDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.bigSplitContainer)).BeginInit();
             this.bigSplitContainer.Panel1.SuspendLayout();
             this.bigSplitContainer.Panel2.SuspendLayout();
@@ -625,6 +627,18 @@
             this.chartSaveFileDialog.Filter = "Portable Network Graphics|*.png|Bitmap|*.bmp";
             this.chartSaveFileDialog.Title = "Save chart to image";
             // 
+            // sampleSaveFileDialog
+            // 
+            this.sampleSaveFileDialog.FileName = "waveform.sample";
+            this.sampleSaveFileDialog.Filter = "Sampler samples|*.sample";
+            this.sampleSaveFileDialog.Title = "Save sample";
+            // 
+            // openSampleDialog
+            // 
+            this.openSampleDialog.FileName = "waveform.sample";
+            this.openSampleDialog.Filter = "Sampler samples|*.sample|All files|*";
+            this.openSampleDialog.Title = "Open sample";
+            // 
             // SamplerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -716,6 +730,8 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog audioSaveFileDialog;
         private System.Windows.Forms.SaveFileDialog chartSaveFileDialog;
+        private System.Windows.Forms.SaveFileDialog sampleSaveFileDialog;
+        private System.Windows.Forms.OpenFileDialog openSampleDialog;
 
 
     }

@@ -36,17 +36,17 @@ namespace Sampler
                 defaultRate.Value.Tag = defaultRate.Key;
             }
 
-            MakeNewSample();
+            LoadSample(new Sample());
 
             _tempfilename = Path.GetTempFileName();
         }
 
         /// <summary>
-        ///     Make a new sample and update the UI to match it.
+        ///     Set the provided sample as current and update the UI to match it.
         /// </summary>
-        private void MakeNewSample()
+        private void LoadSample(Sample sample)
         {
-            _sample = new Sample();
+            _sample = sample;
             UpdateTimeUI();
             UpdateBitdepthUI();
             UpdateSampleRateUI();
@@ -54,6 +54,15 @@ namespace Sampler
             FormulaBox.Text = _sample.WaveFunction;
             _sample.SampleChanged += sample_SampleChanged;
             _unsavedChanges = false;
+        }
+
+        private void DiscardCurrentSample()
+        {
+            if (_player != null)
+            {
+                _player.Stop();
+            }
+            _sample.SampleChanged -= sample_SampleChanged;
         }
 
         /// <summary>
@@ -301,20 +310,28 @@ namespace Sampler
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_player != null)
-            {
-                _player.Stop();
-            }
-            _sample.SampleChanged -= sample_SampleChanged;
-            MakeNewSample();
+            DiscardCurrentSample();
+            LoadSample(new Sample());
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (openSampleDialog.ShowDialog() == DialogResult.OK)
+            {
+                // TODO: Exceptions
+                Sample sample = SampleStorage.Load(openSampleDialog.FileName);
+                DiscardCurrentSample();
+                LoadSample(sample);
+            }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (sampleSaveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                // TODO: Exceptions >_>
+                SampleStorage.Save(sampleSaveFileDialog.FileName, _sample);
+            }
         }
 
         private void exportAudioToolStripMenuItem_Click(object sender, EventArgs e)
@@ -350,7 +367,6 @@ namespace Sampler
 
         private void SamplerForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            // TODO: Change this to save the waveform rather than audio once that works
             if (!_unsavedChanges) return;
 
             switch (MessageBox.Show("Do you want to save your changes?", "Sampler",
@@ -362,9 +378,9 @@ namespace Sampler
                 case DialogResult.No:
                     break;
                 case DialogResult.Yes:
-                    if (audioSaveFileDialog.ShowDialog() == DialogResult.OK)
+                    if (sampleSaveFileDialog.ShowDialog() == DialogResult.OK)
                     {
-                        StoreWAV(audioSaveFileDialog.FileName, _sample);
+                        SampleStorage.Save(sampleSaveFileDialog.FileName, _sample);
                     }
                     else
                     {
