@@ -41,8 +41,8 @@
             this.linkWAVFile = new System.Windows.Forms.LinkLabel();
             this.tagExpressionEval = new System.Windows.Forms.Label();
             this.linkExpressionEval = new System.Windows.Forms.LinkLabel();
-            this.LicenseText = new System.Windows.Forms.TextBox();
             this.toggleLicenseText = new System.Windows.Forms.Button();
+            this.LicenseText = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -247,18 +247,6 @@
             this.linkExpressionEval.UseCompatibleTextRendering = true;
             this.linkExpressionEval.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.link_LinkClicked);
             // 
-            // LicenseText
-            // 
-            this.LicenseText.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LicenseText.Font = new System.Drawing.Font("Consolas", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LicenseText.Location = new System.Drawing.Point(0, 0);
-            this.LicenseText.Multiline = true;
-            this.LicenseText.Name = "LicenseText";
-            this.LicenseText.ReadOnly = true;
-            this.LicenseText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.LicenseText.Size = new System.Drawing.Size(621, 326);
-            this.LicenseText.TabIndex = 28;
-            // 
             // toggleLicenseText
             // 
             this.toggleLicenseText.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -271,6 +259,18 @@
             this.toggleLicenseText.Text = "Show license details >>";
             this.toggleLicenseText.UseVisualStyleBackColor = true;
             this.toggleLicenseText.Click += new System.EventHandler(this.toggleLicenseText_Click);
+            // 
+            // LicenseText
+            // 
+            this.LicenseText.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LicenseText.Font = new System.Drawing.Font("Consolas", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LicenseText.Location = new System.Drawing.Point(0, 0);
+            this.LicenseText.Multiline = true;
+            this.LicenseText.Name = "LicenseText";
+            this.LicenseText.ReadOnly = true;
+            this.LicenseText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.LicenseText.Size = new System.Drawing.Size(621, 326);
+            this.LicenseText.TabIndex = 28;
             // 
             // AboutBox
             // 

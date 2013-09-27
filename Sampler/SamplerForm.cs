@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Media;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using EricOulashin;
 using ExpressionEval.ExpressionEvaluation;
 using ExpressionEval.MethodState;
@@ -336,13 +337,26 @@ namespace Sampler
         {
             if (audioSaveFileDialog.ShowDialog() == DialogResult.OK)
             {
+                // TODO: Exception handling for saving audio
                 StoreWAV(audioSaveFileDialog.FileName, _sample);
             }
         }
 
         private void exportGraphToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            // TODO: Exception handling for saving image
+            if (chartSaveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                switch (chartSaveFileDialog.FilterIndex)
+                {
+                    case 1:
+                        SampleChart.SaveImage(chartSaveFileDialog.FileName, ChartImageFormat.Png);
+                        break;
+                    case 2:
+                        SampleChart.SaveImage(chartSaveFileDialog.FileName, ChartImageFormat.Bmp);
+                        break;
+                }
+            }
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
