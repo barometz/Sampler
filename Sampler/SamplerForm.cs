@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Media;
+using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using EricOulashin;
@@ -15,7 +16,7 @@ namespace Sampler
         private readonly string _tempfilename;
         private SoundPlayer _player;
         private Sample _sample;
-        private bool _unsavedChanges = false;
+        private bool _unsavedChanges;
 
         public SamplerForm()
         {
@@ -46,19 +47,17 @@ namespace Sampler
         private void MakeNewSample()
         {
             _sample = new Sample();
-            // UGLY: Not entirely sure why these don't just use this._sample.  
-            // On the other hand, these might not even be necessary when and if proper databinding happens.
-            UpdateTimeUI(_sample);
-            UpdateBitdepthUI(_sample);
-            UpdateSampleRateUI(_sample);
-            UpdateChart(_sample);
+            UpdateTimeUI();
+            UpdateBitdepthUI();
+            UpdateSampleRateUI();
+            UpdateChart();
             FormulaBox.Text = _sample.WaveFunction;
             _sample.SampleChanged += sample_SampleChanged;
             _unsavedChanges = false;
         }
 
         /// <summary>
-        ///     Store the provided sample at the specified location.
+        ///     Store a wavfile generated from the provided sample at the specified location.
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="sample"></param>
@@ -96,83 +95,87 @@ namespace Sampler
             switch (e.Type)
             {
                 case SampleChangedEventArgs.ChangeType.BitDepth:
-                    UpdateBitdepthUI(sample);
+                    UpdateBitdepthUI();
                     break;
                 case SampleChangedEventArgs.ChangeType.Length:
-                    UpdateTimeUI(sample);
+                    UpdateTimeUI();
                     break;
                 case SampleChangedEventArgs.ChangeType.SampleRate:
-                    UpdateTimeUI(sample);
-                    UpdateSampleRateUI(sample);
+                    UpdateTimeUI();
+                    UpdateSampleRateUI();
                     break;
             }
 
-            UpdateChart(sample);
+            UpdateChart();
 
             _unsavedChanges = true;
         }
 
-        private void UpdateChart(Sample sample)
+        private void UpdateChart()
         {
-            SampleChart.ChartAreas[0].AxisX.Maximum = sample.Length*1000;
-            SampleChart.ChartAreas[0].AxisY.Minimum = sample.LowerBound - 1;
-            SampleChart.ChartAreas[0].AxisY.Maximum = sample.UpperBound;
+            SampleChart.ChartAreas[0].AxisX.Maximum = _sample.Length*1000;
+            SampleChart.ChartAreas[0].AxisY.Minimum = _sample.LowerBound - 1;
+            SampleChart.ChartAreas[0].AxisY.Maximum = _sample.UpperBound;
             // Getting the gridlines right on a Chart is a bit of a pain 
-            SampleChart.ChartAreas[0].AxisY.Interval = (sample.LowerBound - 2)/-2.0;
+            SampleChart.ChartAreas[0].AxisY.Interval = (_sample.LowerBound - 2)/-2.0;
 
             SampleChart.Series[0].Points.Clear();
-            for (int i = 0; i < sample.SampleCount; i++)
+            for (int i = 0; i < _sample.SampleCount; i++)
             {
-                SampleChart.Series[0].Points.AddXY(i*1000*sample.Resolution, sample.ValueAt(i*sample.Resolution));
+                SampleChart.Series[0].Points.AddXY(i*1000*_sample.Resolution, _sample.ValueAt(i*_sample.Resolution));
             }
             // Get at most ten tickmarks on the X-axis. 
-            SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(sample.Length*1000)));
+            SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(_sample.Length*1000)));
         }
 
-        private void UpdateBitdepthUI(Sample sample)
+        private void UpdateBitdepthUI()
         {
-            if (sample.BitDepth == 8)
+            if (_sample.BitDepth == 8)
             {
                 BitDepth8.Checked = true;
             }
-            else if (sample.BitDepth == 16)
+            else if (_sample.BitDepth == 16)
             {
                 BitDepth16.Checked = true;
             }
         }
 
-        private void UpdateSampleRateUI(Sample sample)
+        /// <summary>
+        ///     Update the radiobuttons and/or custom value for the sample rate.
+        /// </summary>
+        private void UpdateSampleRateUI()
         {
-            if (CustomRate.Value == sample.SampleRate)
+            if (CustomRate.Value == _sample.SampleRate)
             {
                 rateCustom.Checked = true;
             }
-            else if (_defaultRates.ContainsKey(sample.SampleRate))
+            else if (_defaultRates.ContainsKey(_sample.SampleRate))
             {
-                _defaultRates[sample.SampleRate].Checked = true;
+                _defaultRates[_sample.SampleRate].Checked = true;
             }
             else
             {
                 rateCustom.Checked = true;
-                CustomRate.Value = sample.SampleRate;
+                CustomRate.Value = _sample.SampleRate;
             }
         }
 
         /// <summary>
-        ///     Sets the limits of the time controls according to the resolution of the <paramref name="sample" /> and
+        ///     Sets the limits of the time controls according to the resolution of the sample and
         ///     their values according to its length.
         /// </summary>
-        /// <param name="sample"></param>
-        private void UpdateTimeUI(Sample sample)
+        private void UpdateTimeUI()
         {
-            Time.Minimum = Convert.ToDecimal(sample.Resolution*1000);
-            Time.Increment = Convert.ToDecimal(sample.Resolution*1000);
-            logTime.Minimum = Convert.ToInt32(Math.Log10(sample.Resolution)*10);
+            Time.Minimum = Convert.ToDecimal(_sample.Resolution*1000);
+            Time.Increment = Convert.ToDecimal(_sample.Resolution*1000);
+            logTime.Minimum = Convert.ToInt32(Math.Log10(_sample.Resolution)*10);
 
-            Time.Value = Convert.ToDecimal(sample.Length*1000);
-            SampleCount.Value = sample.SampleCount;
-            logTime.Value = Convert.ToInt32(Math.Log10(sample.Length)*10);
+            Time.Value = Convert.ToDecimal(_sample.Length*1000);
+            SampleCount.Value = _sample.SampleCount;
+            logTime.Value = Convert.ToInt32(Math.Log10(_sample.Length)*10);
         }
+
+        #region UI event handlers
 
         private void ApplyFunction_Click(object sender, EventArgs e)
         {
@@ -182,7 +185,7 @@ namespace Sampler
             }
             catch (ArgumentException ex)
             {
-                // TODO: rig a better way to display errors, modal dialog?
+                // TODO: display errors in a more helpful way
                 MessageBox.Show(ex.ToString());
             }
         }
@@ -285,7 +288,7 @@ namespace Sampler
             }
             catch (IOException)
             {
-              // IOException and UnauthoriedAccessException shouldn't happen, but may occur when someone's reading the 
+                // IOException and UnauthoriedAccessException shouldn't happen, but may occur when someone's reading the 
             } // tempfile for whatever reason.
             catch (UnauthorizedAccessException)
             {
@@ -308,12 +311,10 @@ namespace Sampler
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
         }
 
         private void exportAudioToolStripMenuItem_Click(object sender, EventArgs e)
@@ -377,7 +378,7 @@ namespace Sampler
         {
             try
             {
-                string execlocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string execlocation = Assembly.GetExecutingAssembly().Location;
                 string basepath = Path.GetDirectoryName(execlocation);
                 Process.Start(Path.Combine(basepath, "Help/index.html"));
             }
@@ -396,5 +397,7 @@ namespace Sampler
         {
             new AboutBox().ShowDialog();
         }
+
+        #endregion
     }
 }

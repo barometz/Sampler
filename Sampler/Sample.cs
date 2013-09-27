@@ -4,7 +4,7 @@ using ExpressionEval.MethodState;
 
 namespace Sampler
 {
-    // Seems like this might be more properly done with change notifiers
+    // This may or may not be replaced with property change notifications in the future.
     public class SampleChangedEventArgs : EventArgs
     {
         public enum ChangeType
@@ -26,11 +26,11 @@ namespace Sampler
     public class Sample
     {
         private uint _bitdepth;
+        private Func<double, double> _compiledfunction;
         private double _normalizingfactor;
         private uint _samplecount;
         private uint _samplerate;
         private string _wavefunction;
-        private Func<double, double> _compiledfunction;
 
         /// <summary>
         /// </summary>
@@ -41,11 +41,27 @@ namespace Sampler
         public Sample(uint samplerate = 8363, uint samplecount = 16, uint bitdepth = 8,
             string waveform = "sin(t, C)")
         {
+            // It'd be nice to handle these exceptions through the property setters, but given the way they 
+            // interact with eachother that seems like a mistake.
+            if (samplerate == 0)
+            {
+                throw new ArgumentOutOfRangeException("samplerate", "Sample rate cannot be 0.");
+            }
+            if (samplecount == 0)
+            {
+                throw new ArgumentOutOfRangeException("samplecount", "Sample count cannot be 0.");
+            }
+            if (bitdepth == 0)
+            {
+                throw new ArgumentOutOfRangeException("bitdepth", "Bit depth cannot be 0.");
+            }
             _samplerate = samplerate;
             _samplecount = samplecount;
             _bitdepth = bitdepth;
             WaveFunction = waveform;
         }
+
+        #region Properties
 
         /// <summary>
         ///     Gets or sets the number of samples per second in Hz, while keeping the length in seconds constant and adjusting the
@@ -197,13 +213,20 @@ namespace Sampler
             }
         }
 
+        #endregion
+
         /// <summary>
         ///     Occurs when the sample has changed in some way.  <see cref="SampleChangedEventArgs.ChangeType" /> indicates what
         ///     has changed.
         /// </summary>
+        /// <remarks>May eventually be replaced with property change notifications to facilitate WPF bindings.</remarks>
         public event EventHandler<SampleChangedEventArgs> SampleChanged;
 
-        // TODO: This *will* break if the function is either positive or negative across the t-domain
+        // TODO: This *will* break if the function is either positive or negative across the t-domain.  I think.
+        // TODO: The math looks like it could be shorter.
+        /// <summary>
+        ///     Figure out the factor to make the wavefunction fit within the current bit depth.
+        /// </summary>
         private void SetNormalizingFactor()
         {
             double bottomoverflow = LowerBound - MinValue();
@@ -299,10 +322,9 @@ namespace Sampler
         private void CompileFunction(string text)
         {
             IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionLanguage.CSharp);
-            var context = new EvalContext { S = this };
+            var context = new EvalContext {S = this};
             EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(text);
             _compiledfunction = GetMethod(context, expression);
         }
-
     }
 }

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -26,10 +22,10 @@ namespace Sampler
                 "http://www.codeproject.com/Articles/35725/C-WAV-file-class-audio-mixing-and-some-light-audio";
             splitContainer1.Panel2Collapsed = true;
             Width = Width - LicenseText.Width;
-            
+
             try
             {
-                string execlocation = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string execlocation = Assembly.GetExecutingAssembly().Location;
                 string basepath = Path.GetDirectoryName(execlocation);
                 LicenseText.Text = File.ReadAllText(Path.Combine(basepath, "LICENSE.md"));
             }
@@ -37,7 +33,6 @@ namespace Sampler
             {
                 LicenseText.Text = "Could not open LICENSE.md: \n" + ex.Message;
             }
-
         }
 
         #region Assembly Attribute Accessors
@@ -46,37 +41,36 @@ namespace Sampler
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+                object[] attributes =
+                    Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (AssemblyTitleAttribute), false);
                 if (attributes.Length > 0)
                 {
-                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+                    var titleAttribute = (AssemblyTitleAttribute) attributes[0];
                     if (titleAttribute.Title != "")
                     {
                         return titleAttribute.Title;
                     }
                 }
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+                return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
             }
         }
 
         public string AssemblyVersion
         {
-            get
-            {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            }
+            get { return Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
         }
 
         public string AssemblyDescription
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+                object[] attributes =
+                    Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (AssemblyDescriptionAttribute), false);
                 if (attributes.Length == 0)
                 {
                     return "";
                 }
-                return ((AssemblyDescriptionAttribute)attributes[0]).Description;
+                return ((AssemblyDescriptionAttribute) attributes[0]).Description;
             }
         }
 
@@ -84,12 +78,13 @@ namespace Sampler
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+                object[] attributes =
+                    Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (AssemblyProductAttribute), false);
                 if (attributes.Length == 0)
                 {
                     return "";
                 }
-                return ((AssemblyProductAttribute)attributes[0]).Product;
+                return ((AssemblyProductAttribute) attributes[0]).Product;
             }
         }
 
@@ -97,12 +92,13 @@ namespace Sampler
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+                object[] attributes =
+                    Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (AssemblyCopyrightAttribute), false);
                 if (attributes.Length == 0)
                 {
                     return "";
                 }
-                return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+                return ((AssemblyCopyrightAttribute) attributes[0]).Copyright;
             }
         }
 
@@ -110,14 +106,16 @@ namespace Sampler
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+                object[] attributes =
+                    Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (AssemblyCompanyAttribute), false);
                 if (attributes.Length == 0)
                 {
                     return "";
                 }
-                return ((AssemblyCompanyAttribute)attributes[0]).Company;
+                return ((AssemblyCompanyAttribute) attributes[0]).Company;
             }
         }
+
         #endregion
 
         private void okButton_Click(object sender, EventArgs e)
