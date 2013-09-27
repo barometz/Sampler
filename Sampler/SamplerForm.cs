@@ -6,8 +6,6 @@ using System.Media;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using EricOulashin;
-using ExpressionEval.ExpressionEvaluation;
-using ExpressionEval.MethodState;
 
 namespace Sampler
 {
@@ -42,42 +40,21 @@ namespace Sampler
             _tempfilename = Path.GetTempFileName();
         }
 
+        /// <summary>
+        ///     Make a new sample and update the UI to match it.
+        /// </summary>
         private void MakeNewSample()
         {
-            _sample = new Sample {SampleCount = 16};
+            _sample = new Sample();
+            // UGLY: Not entirely sure why these don't just use this._sample.  
+            // On the other hand, these might not even be necessary when and if proper databinding happens.
             UpdateTimeUI(_sample);
             UpdateBitdepthUI(_sample);
             UpdateSampleRateUI(_sample);
+            UpdateChart(_sample);
+            FormulaBox.Text = _sample.WaveFunction;
             _sample.SampleChanged += sample_SampleChanged;
-            FormulaBox.Text = "sin(t, C)";
-            ParseToSample(FormulaBox.Text, _sample);
             _unsavedChanges = false;
-        }
-
-        private static Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
-        {
-            Func<double, double> ret = delegate(double t)
-            {
-                context.t = t;
-                return expr(context);
-            };
-            return ret;
-        }
-
-        /// <summary>
-        ///     Turn a function string ("sin(t, C)") into a Func&lt;double, double&gt; and connect it with the sample.
-        /// </summary>
-        /// <param name="text">A string that represents a function that can be used to generate a waveform.</param>
-        /// <param name="sample">
-        ///     The sample will be used in the method's evaluation context and receives the generated Func&lt;
-        ///     double, double&gt;.
-        /// </param>
-        private static void ParseToSample(string text, Sample sample)
-        {
-            IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionLanguage.CSharp);
-            var context = new EvalContext {S = sample};
-            EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(text);
-            sample.WaveFunction = GetMethod(context, expression);
         }
 
         /// <summary>
@@ -130,6 +107,13 @@ namespace Sampler
                     break;
             }
 
+            UpdateChart(sample);
+
+            _unsavedChanges = true;
+        }
+
+        private void UpdateChart(Sample sample)
+        {
             SampleChart.ChartAreas[0].AxisX.Maximum = sample.Length*1000;
             SampleChart.ChartAreas[0].AxisY.Minimum = sample.LowerBound - 1;
             SampleChart.ChartAreas[0].AxisY.Maximum = sample.UpperBound;
@@ -143,8 +127,6 @@ namespace Sampler
             }
             // Get at most ten tickmarks on the X-axis. 
             SampleChart.ChartAreas[0].AxisX.Interval = Math.Pow(10, Math.Floor(Math.Log10(sample.Length*1000)));
-
-            _unsavedChanges = true;
         }
 
         private void UpdateBitdepthUI(Sample sample)
@@ -196,10 +178,11 @@ namespace Sampler
         {
             try
             {
-                ParseToSample(FormulaBox.Text, _sample);
+                _sample.WaveFunction = FormulaBox.Text;
             }
-            catch (ApplicationException ex)
+            catch (ArgumentException ex)
             {
+                // TODO: rig a better way to display errors, modal dialog?
                 MessageBox.Show(ex.ToString());
             }
         }

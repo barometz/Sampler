@@ -1,4 +1,6 @@
 ﻿using System;
+using ExpressionEval.ExpressionEvaluation;
+using ExpressionEval.MethodState;
 
 namespace Sampler
 {
@@ -27,32 +29,37 @@ namespace Sampler
         private double _normalizingfactor;
         private uint _samplecount;
         private uint _samplerate;
-        private Func<double, double> _wavefunction;
+        private string _wavefunction;
+        private Func<double, double> _compiledfunction;
 
         /// <summary>
         /// </summary>
         /// <param name="samplerate"></param>
         /// <param name="samplecount"></param>
         /// <param name="bitdepth"></param>
-        /// <param name="waveform">The waveform function.  Defaults to a sine wave at 440 Hz.</param>
-        public Sample(uint samplerate = 8363, uint samplecount = 64, uint bitdepth = 8,
-            Func<double, double> waveform = null)
+        /// <param name="waveform">The waveform function.  Defaults to a sine wave at C5.</param>
+        public Sample(uint samplerate = 8363, uint samplecount = 16, uint bitdepth = 8,
+            string waveform = "sin(t, C)")
         {
             _samplerate = samplerate;
             _samplecount = samplecount;
             _bitdepth = bitdepth;
-            WaveFunction = waveform ?? (t => Math.Sin(t*440*2*Math.PI));
-            SampleChanged += Sample_SampleChanged;
+            WaveFunction = waveform;
         }
 
         /// <summary>
-        ///     Gets or sets the number of samples per second in Hz.
+        ///     Gets or sets the number of samples per second in Hz, while keeping the length in seconds constant and adjusting the
+        ///     sample count.
         /// </summary>
         public uint SampleRate
         {
             get { return _samplerate; }
             set
             {
+                if (value == 0)
+                {
+                    throw new ArgumentOutOfRangeException("value", "Sample rate cannot be 0.");
+                }
                 if (value != _samplerate)
                 {
                     double ratio = Convert.ToDouble(value)/_samplerate;
@@ -80,9 +87,14 @@ namespace Sampler
             get { return _bitdepth; }
             set
             {
+                if (value == 0)
+                {
+                    throw new ArgumentOutOfRangeException("value", "Bit depth cannot be 0.");
+                }
                 if (value != _bitdepth)
                 {
                     _bitdepth = value;
+                    SetNormalizingFactor();
                     RaiseSampleChanged(SampleChangedEventArgs.ChangeType.BitDepth);
                 }
             }
@@ -114,6 +126,7 @@ namespace Sampler
                 if (samplecount != _samplecount)
                 {
                     _samplecount = samplecount;
+                    SetNormalizingFactor();
                     RaiseSampleChanged(SampleChangedEventArgs.ChangeType.Length);
                 }
             }
@@ -131,6 +144,7 @@ namespace Sampler
                 if (value != _samplecount)
                 {
                     _samplecount = value;
+                    SetNormalizingFactor();
                     RaiseSampleChanged(SampleChangedEventArgs.ChangeType.Length);
                 }
             }
@@ -141,15 +155,24 @@ namespace Sampler
         ///     argument. The results will be normalized to fit between <see cref="Sample.MinValue" /> and
         ///     <see cref="Sample.UpperBound" /> inclusive.
         /// </summary>
-        public Func<double, double> WaveFunction
+        public string WaveFunction
         {
             get { return _wavefunction; }
             set
             {
                 if (value != _wavefunction)
                 {
-                    _wavefunction = value;
-                    RaiseSampleChanged(SampleChangedEventArgs.ChangeType.Values);
+                    try
+                    {
+                        CompileFunction(value);
+                        _wavefunction = value;
+                        SetNormalizingFactor();
+                        RaiseSampleChanged(SampleChangedEventArgs.ChangeType.Values);
+                    }
+                    catch (ApplicationException ex)
+                    {
+                        throw new ArgumentException("Could not compile the provided function.", ex);
+                    }
                 }
             }
         }
@@ -181,7 +204,7 @@ namespace Sampler
         public event EventHandler<SampleChangedEventArgs> SampleChanged;
 
         // TODO: This *will* break if the function is either positive or negative across the t-domain
-        private void Sample_SampleChanged(object sender, SampleChangedEventArgs e)
+        private void SetNormalizingFactor()
         {
             double bottomoverflow = LowerBound - MinValue();
             double topoverflow = MaxValue() - UpperBound;
@@ -214,9 +237,9 @@ namespace Sampler
             double minvalue = UpperBound;
             for (uint i = 0; i < SampleCount; i++)
             {
-                if (WaveFunction(i*Resolution) < minvalue)
+                if (_compiledfunction(i*Resolution) < minvalue)
                 {
-                    minvalue = WaveFunction(i*Resolution);
+                    minvalue = _compiledfunction(i*Resolution);
                 }
             }
             return minvalue;
@@ -231,9 +254,9 @@ namespace Sampler
             double maxvalue = LowerBound;
             for (uint i = 0; i < SampleCount; i++)
             {
-                if (WaveFunction(i*Resolution) > maxvalue)
+                if (_compiledfunction(i*Resolution) > maxvalue)
                 {
-                    maxvalue = WaveFunction(i*Resolution);
+                    maxvalue = _compiledfunction(i*Resolution);
                 }
             }
             return maxvalue;
@@ -249,7 +272,37 @@ namespace Sampler
         /// </returns>
         public double ValueAt(double t)
         {
-            return WaveFunction(t)*_normalizingfactor;
+            return _compiledfunction(t)*_normalizingfactor;
         }
+
+        /// <summary>
+        ///     Since an EvalExpression can't take any parameters but takes all its information from its evaluation context object
+        ///     we'll need a wrapper to create a convenient Func&lt;double, double&gt; to use for the calculations.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="expr"></param>
+        /// <returns></returns>
+        private static Func<double, double> GetMethod(EvalContext context, EvalExpression<double, EvalContext> expr)
+        {
+            Func<double, double> ret = delegate(double t)
+            {
+                context.t = t;
+                return expr(context);
+            };
+            return ret;
+        }
+
+        /// <summary>
+        ///     Compile a function string ("sin(t, C)") into a Func&lt;double, double&gt;, connect it with the sample and store it.
+        /// </summary>
+        /// <param name="text">A string that represents a function that can be used to generate a waveform.</param>
+        private void CompileFunction(string text)
+        {
+            IExpressionEvaluator eval = new ExpressionEvaluator(ExpressionLanguage.CSharp);
+            var context = new EvalContext { S = this };
+            EvalExpression<double, EvalContext> expression = eval.GetDelegate<double, EvalContext>(text);
+            _compiledfunction = GetMethod(context, expression);
+        }
+
     }
 }
