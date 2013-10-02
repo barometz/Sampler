@@ -56,6 +56,33 @@ namespace Sampler
             _unsavedChanges = false;
         }
 
+        /// <summary>
+        ///     Pop up a save dialog and try to save the current _sample.
+        /// </summary>
+        /// <returns>The result of the save dialog, or <see cref="DialogResult.Cancel" /> when an exception occurred.</returns>
+        /// <remarks>
+        ///     Handling the exception here rather than passing it on the the caller doesn't seem quite right, but limits code
+        ///     duplication.
+        /// </remarks>
+        private DialogResult SaveSample()
+        {
+            DialogResult result = sampleSaveFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    // TODO: More detailed information in sample saving error message
+                    SampleStorage.Save(sampleSaveFileDialog.FileName, _sample);
+                }
+                catch (Exception ex)
+                {
+                    new ExceptionBox("Could not save sample to \n" + sampleSaveFileDialog.FileName, ex).ShowDialog();
+                    return DialogResult.Cancel;
+                }
+            }
+            return result;
+        }
+
         private void DiscardCurrentSample()
         {
             if (_player != null)
@@ -194,8 +221,9 @@ namespace Sampler
             }
             catch (ArgumentException ex)
             {
-                // TODO: display errors in a more helpful way
-                MessageBox.Show(ex.ToString());
+                new ExceptionBox(
+                    "This does not appear to be a valid function.  Read the function manual for more help.\n" +
+                    FormulaBox.Text, ex).ShowDialog();
             }
         }
 
@@ -294,17 +322,18 @@ namespace Sampler
             try
             {
                 File.Delete(_tempfilename);
-            }
+            } 
+            // IOException and UnauthoriedAccessException shouldn't happen, but may occur when someone's reading the 
+            // tempfile for whatever reason.  No need to worry about those.
             catch (IOException)
             {
-                // IOException and UnauthoriedAccessException shouldn't happen, but may occur when someone's reading the 
-            } // tempfile for whatever reason.
+            } 
             catch (UnauthorizedAccessException)
             {
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Error while deleting temporary files");
+                new ExceptionBox("Error while deleting temporary audio file at\n" + _tempfilename, ex).ShowDialog();
             }
         }
 
@@ -318,44 +347,63 @@ namespace Sampler
         {
             if (openSampleDialog.ShowDialog() == DialogResult.OK)
             {
-                // TODO: Exceptions
-                Sample sample = SampleStorage.Load(openSampleDialog.FileName);
-                DiscardCurrentSample();
-                LoadSample(sample);
+                try
+                {
+                    // TODO: May want to separately handle a failure in LoadSample, although there's not much that could go wrong
+                    Sample sample = SampleStorage.Load(openSampleDialog.FileName);
+                    DiscardCurrentSample();
+                    LoadSample(sample);
+                }
+                catch (Exception ex)
+                {
+                    new ExceptionBox("Could not open sample file at\n" + openSampleDialog.FileName, ex).ShowDialog();
+                }
             }
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (sampleSaveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                // TODO: Exceptions >_>
-                SampleStorage.Save(sampleSaveFileDialog.FileName, _sample);
-            }
+            SaveSample();
         }
 
         private void exportAudioToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (audioSaveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                // TODO: Exception handling for saving audio
-                StoreWAV(audioSaveFileDialog.FileName, _sample);
+                try
+                {
+                    // TODO: More detailed information in audio export error message
+                    // TODO: Add option to open audio after saving?  No idea how.
+                    StoreWAV(audioSaveFileDialog.FileName, _sample);
+                }
+                catch (Exception ex)
+                {
+                    new ExceptionBox("Could not export audio to \n" + audioSaveFileDialog.FileName, ex).ShowDialog();
+                }
             }
         }
 
         private void exportGraphToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Exception handling for saving image
+            // TODO: More detailed information in image save error message
+            // TODO: Add option to open image after saving?  No idea how.
             if (chartSaveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                switch (chartSaveFileDialog.FilterIndex)
+                try
                 {
-                    case 1:
-                        SampleChart.SaveImage(chartSaveFileDialog.FileName, ChartImageFormat.Png);
-                        break;
-                    case 2:
-                        SampleChart.SaveImage(chartSaveFileDialog.FileName, ChartImageFormat.Bmp);
-                        break;
+                    switch (chartSaveFileDialog.FilterIndex)
+                    {
+                        case 1:
+                            SampleChart.SaveImage(chartSaveFileDialog.FileName, ChartImageFormat.Png);
+                            break;
+                        case 2:
+                            SampleChart.SaveImage(chartSaveFileDialog.FileName, ChartImageFormat.Bmp);
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    new ExceptionBox("Could not export chart image to \n" + chartSaveFileDialog.FileName, ex).ShowDialog();
                 }
             }
         }
@@ -378,11 +426,7 @@ namespace Sampler
                 case DialogResult.No:
                     break;
                 case DialogResult.Yes:
-                    if (sampleSaveFileDialog.ShowDialog() == DialogResult.OK)
-                    {
-                        SampleStorage.Save(sampleSaveFileDialog.FileName, _sample);
-                    }
-                    else
+                    if (SaveSample() != DialogResult.OK)
                     {
                         e.Cancel = true;
                     }
@@ -400,12 +444,13 @@ namespace Sampler
             }
             catch (FileNotFoundException ex)
             {
-                MessageBox.Show("Help files not available.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                new ExceptionBox(
+                    "Help files not available - they should be located in the Help folder that should come with Sampler.exe",
+                    ex).ShowDialog();
             }
             catch (ArgumentNullException ex)
             {
-                MessageBox.Show("Error while retrieving the program's base path.", "Error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                new ExceptionBox("Error while retrieving the program's base path.", ex).ShowDialog();
             }
         }
 
