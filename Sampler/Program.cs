@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
+using Sampler.Properties;
 
 namespace Sampler
 {
@@ -11,6 +14,7 @@ namespace Sampler
         [STAThread]
         static void Main()
         {
+            Resources.Culture = new CultureInfo("nl-NL");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new SamplerForm());

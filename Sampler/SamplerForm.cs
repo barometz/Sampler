@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using EricOulashin;
+using Sampler.Properties;
 
 namespace Sampler
 {
@@ -57,6 +58,18 @@ namespace Sampler
         }
 
         /// <summary>
+        /// Pulls up an ExceptionBox with the specified message.
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="format">To be passed to String.Format.</param>
+        /// <param name="args">The arguments for the format string (if any).</param>
+        private static void FormatAndShowException(Exception ex, String format, params object[] args)
+        {
+            var message = String.Format(format, args);
+            new ExceptionBox(message, ex).ShowDialog();
+        }
+
+        /// <summary>
         ///     Pop up a save dialog and try to save the current _sample.
         /// </summary>
         /// <returns>The result of the save dialog, or <see cref="DialogResult.Cancel" /> when an exception occurred.</returns>
@@ -76,7 +89,7 @@ namespace Sampler
                 }
                 catch (Exception ex)
                 {
-                    new ExceptionBox("Could not save sample to \n" + sampleSaveFileDialog.FileName, ex).ShowDialog();
+                    FormatAndShowException(ex, Resources.Could_not_save_sample_to, sampleSaveFileDialog.FileName);
                     return DialogResult.Cancel;
                 }
             }
@@ -221,9 +234,7 @@ namespace Sampler
             }
             catch (ArgumentException ex)
             {
-                new ExceptionBox(
-                    "This does not appear to be a valid function.  Read the function manual for more help.\n" +
-                    FormulaBox.Text, ex).ShowDialog();
+                FormatAndShowException(ex, Resources.This_does_not_appear_to_be_a_valid_function, FormulaBox.Text);
             }
         }
 
@@ -333,7 +344,7 @@ namespace Sampler
             }
             catch (Exception ex)
             {
-                new ExceptionBox("Error while deleting temporary audio file at\n" + _tempfilename, ex).ShowDialog();
+                FormatAndShowException(ex, Resources.Error_while_deleting_temporary_audio_file_at, _tempfilename);
             }
         }
 
@@ -356,7 +367,7 @@ namespace Sampler
                 }
                 catch (Exception ex)
                 {
-                    new ExceptionBox("Could not open sample file at\n" + openSampleDialog.FileName, ex).ShowDialog();
+                    FormatAndShowException(ex, Resources.Could_not_open_sample_file_at, openSampleDialog.FileName);
                 }
             }
         }
@@ -378,7 +389,7 @@ namespace Sampler
                 }
                 catch (Exception ex)
                 {
-                    new ExceptionBox("Could not export audio to \n" + audioSaveFileDialog.FileName, ex).ShowDialog();
+                    FormatAndShowException(ex, Resources.Could_not_export_audio_to, audioSaveFileDialog.FileName);
                 }
             }
         }
@@ -403,7 +414,7 @@ namespace Sampler
                 }
                 catch (Exception ex)
                 {
-                    new ExceptionBox("Could not export chart image to \n" + chartSaveFileDialog.FileName, ex).ShowDialog();
+                    FormatAndShowException(ex, Resources.Could_not_export_chart_image_to, chartSaveFileDialog.FileName);
                 }
             }
         }
@@ -417,7 +428,7 @@ namespace Sampler
         {
             if (!_unsavedChanges) return;
 
-            switch (MessageBox.Show("Do you want to save your changes?", "Sampler",
+            switch (MessageBox.Show(Resources.Do_you_want_to_save_your_changes_, Application.ProductName,
                 MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
             {
                 case DialogResult.Cancel:
@@ -444,13 +455,11 @@ namespace Sampler
             }
             catch (FileNotFoundException ex)
             {
-                new ExceptionBox(
-                    "Help files not available - they should be located in the Help folder that should come with Sampler.exe",
-                    ex).ShowDialog();
+                FormatAndShowException(ex, Resources.Help_files_not_available);
             }
             catch (ArgumentNullException ex)
             {
-                new ExceptionBox("Error while retrieving the program's base path.", ex).ShowDialog();
+                FormatAndShowException(ex, Resources.Error_while_retrieving_the_programs_base_path);
             }
         }
 

@@ -81,6 +81,11 @@
     <Compile Include="ExceptionBox.Designer.cs">
       <DependentUpon>ExceptionBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.nl-NL.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.nl-NL.resx</DependentUpon>
+    </Compile>
     <Compile Include="SamplerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,6 +101,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ExceptionBox.resx">
       <DependentUpon>ExceptionBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.nl-NL.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.nl-NL.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SamplerForm.resx">
       <DependentUpon>SamplerForm.cs</DependentUpon>
