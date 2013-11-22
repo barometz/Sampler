@@ -14,7 +14,7 @@ namespace Sampler
         [STAThread]
         static void Main()
         {
-            Resources.Culture = new CultureInfo("nl-NL");
+            //Resources.Culture = new CultureInfo("nl-NL");
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new SamplerForm());

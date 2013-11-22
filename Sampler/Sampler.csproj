@@ -107,6 +107,9 @@
       <LastGenOutput>Resources.nl-NL.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="SamplerForm.nl-NL.resx">
+      <DependentUpon>SamplerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SamplerForm.resx">
       <DependentUpon>SamplerForm.cs</DependentUpon>
     </EmbeddedResource>
